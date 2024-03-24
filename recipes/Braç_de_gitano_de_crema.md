@@ -7,14 +7,15 @@ tags: Postres
 recipeYield: 8
 
 ingredients:
-- 100 g fe farina per postres
-- 100 g de sucre
-- 7 ous  (3 per la base i 4 per la crema)
-- 2 cullerades soperes de Maizena
-- 500 ml de llet
-- 1 branquilló de canyella
-- la pell d'una llimona
-- 6 cullerades de succre
+- Farina per postres: 100 g
+- Sucre: 100 g
+- Ous (per la base): 3
+- Ous (per la crema): 4
+- Maizena: 2 cullerades soperes
+- Llet: 500 ml
+- Branquilló de canyella: 1
+- Pell d'una llimona
+- Cullerades de sucre: 6
 
 directions:
 - Primer farem la crema per farcir el braç. 

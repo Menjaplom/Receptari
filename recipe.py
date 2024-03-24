@@ -1,3 +1,4 @@
+from ingredient import *
 
 class Recipe:
     '''This is a recipe class'''
@@ -25,42 +26,50 @@ class Recipe:
                 content = line[0] if len(line) == 1 else line[1]
                 match label:
                     case 'version':
-                        self.version = content.rstrip('\n')
+                        self.version = content.rstrip('\n').strip()
                     case 'title':
-                        self.title = content.rstrip('\n')
+                        self.title = content.rstrip('\n').strip()
                     case 'image':
-                        self.image = content.rstrip('\n')
+                        self.image = content.rstrip('\n').strip()
                     case 'recipeCategory':
-                        self.recipe_category = content.rstrip('\n').split(' ')
+                        self.recipe_category = content.rstrip('\n').strip().split()
                     case 'tags':
-                        self.tags = content.rstrip('\n').split(' ')
+                        self.tags = content.rstrip('\n').strip().split()
                     case 'recipeYield':
-                        self.recipe_yield = content.rstrip('\n')
+                        self.recipe_yield = content.rstrip('\n').strip()
                     case 'prepTime':
-                        self.prep_time = content.rstrip('\n')
+                        self.prep_time = content.rstrip('\n').strip()
                     case 'cookTime':
-                        self.cook_time = content.rstrip('\n')
+                        self.cook_time = content.rstrip('\n').strip()
                     case 'ingredients':
-                        self.ingredients = 'TODO:'
+                        self.ingredients = []
+                        ingr = lines[l + 1].rstrip('\n').strip()
+                        while ingr[0:2] == '- ':
+                            self.ingredients.append(Ingredient(ingr[2:]))
+                            l += 1
+                            ingr = lines[l + 1].rstrip('\n').strip()
                     case 'directions':
                         self.directions = []
-                        dir = lines[l + 1].rstrip('\n')
+                        dir = lines[l + 1].rstrip('\n').strip()
                         while dir[0:2] == '- ':
                             self.directions.append(dir[2:])
                             l += 1
-                            dir = lines[l + 1].rstrip('\n')
+                            dir = lines[l + 1].rstrip('\n').strip()
                     case _:
-                        ()
+                        pass
                 l += 1
 
     def debug(self):
-        print('version' + str(self.version))
-        print('title' + str(self.title))
-        print('image' + str(self.image))
-        print('recipeCategory' + str(self.recipe_category))
-        print('tags' + str(self.tags))
-        print('recipeYield' + str(self.recipe_yield))
-        print('prepTime' + str(self.prep_time))
-        print('cookTime' + str(self.cook_time))
-        print('ingredients' + str(self.ingredients))
-        print('directions' + str(self.directions))
+        print('version: ' + str(self.version))
+        print('title: ' + str(self.title))
+        print('image: ' + str(self.image))
+        print('recipeCategory: ' + str(self.recipe_category))
+        print('tags: ' + str(self.tags))
+        print('recipeYield: ' + str(self.recipe_yield))
+        print('prepTime: ' + str(self.prep_time))
+        print('cookTime: ' + str(self.cook_time))
+        print('ingredients:\n')
+        for i in self.ingredients:
+            i.debug()
+        print('directions: ' + str(self.directions))
+    
