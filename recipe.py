@@ -1,5 +1,6 @@
 from ingredient import *
 
+
 class Recipe:
     '''This is a recipe class'''
 
@@ -32,7 +33,8 @@ class Recipe:
                     case 'image':
                         self.image = content.rstrip('\n').strip()
                     case 'recipeCategory':
-                        self.recipe_category = content.rstrip('\n').strip().split()
+                        self.recipe_category = content.rstrip(
+                            '\n').strip().split()
                     case 'tags':
                         self.tags = content.rstrip('\n').strip().split()
                     case 'recipeYield':
@@ -72,4 +74,10 @@ class Recipe:
         for i in self.ingredients:
             i.debug()
         print('directions: ' + str(self.directions))
-    
+
+    def generate_html(self):
+        code = '<div class="recipe">\n'
+        code += f'<h1>{self.title}</h1>'
+
+        code += '</div>'
+        return code
