@@ -5,15 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
     <header>
+        <nav>
+            <ul>
+                <li>Add recipe</li>
+                <li>Add component</li>
+            </ul>
+        </nav>
         <h1>Receptari</h1>
+        <span>
+            <img class="not_login" src="images/not_login.png">
+        </span>
     </header>
     <main>
         <h2 id="title"> Title</h2>
+
         <img src="" alt="" id="main_image">
+
+        <div>
+            <h3>Categories</h3>
+            <ul id="categoies">
+                <li id="categories">Category</li>
+            </ul>
+        </div>
+
         <div>
             <h3>Tags</h3>
             <ul id="tags">
@@ -24,6 +43,16 @@
         <div>
             <h3>Recipe yield</h3>
             <p id="recipe_yield">Yield</p>
+        </div>
+
+        <div>
+            <h3>Preparation time</h3>
+            <p id="prep_time">time</p>
+        </div>
+
+        <div>
+            <h3>Cook time</h3>
+            <p id="cook_time">time</p>
         </div>
 
         <div>
