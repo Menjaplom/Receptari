@@ -45,11 +45,31 @@ function hideComplexRecipeLayout() {
 }
 
 // Components selector
-const comp_sel_val = document.getElementById("components_selector_value");
+let comp_sel_val = document.getElementById("components_selector_value");
 const comp_added = document.getElementById("components_added");
 
 function addComponent() {
+    let val = comp_sel_val.value;
     comp_added.insertAdjacentHTML("beforeend", '<span>' +
-        comp_sel_val.value +
+        val +
         '</span>');
+    loadRecipeJSONAsComponent(val);
+}
+
+// Load recipe JSON
+function loadRecipeJSONAsComponent(recipe_name) {
+    let path = "http://127.0.0.1:5500/recipes/" + recipe_name.trim().toLowerCase().replace(" ", "_") + ".json";
+    console.log(path);
+    fetch(path)
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error
+                    (`HTTP error! Status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then((data) =>
+            console.log(data))
+        .catch((error) =>
+            console.error("Unable to fetch data:", error));
 }
