@@ -5,22 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Recipe</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="../templates/styles.css">
+    <script src="../templates/editable_ingredient.js"></script>
 </head>
 
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li>Add recipe</li>
-                <li>Add component</li>
-            </ul>
-        </nav>
-        <h1>Receptari</h1>
-        <span>
-            <img class="not_login" src="images/not_login.png">
-        </span>
+    <header id="receptari_header">
     </header>
+    <script async src="../templates/header.js"></script>
 
     <main>
         <h2> New Recipe</h2>
@@ -145,6 +137,13 @@
         </div>
 
         <button onclick="">Save recipe</button>
+
+        <div>
+            lets fucking go madafaka:
+        </div>
+        <ul>
+            <editable-ingredient></editable-ingredient>
+        </ul>
     </main>
 
     <footer>

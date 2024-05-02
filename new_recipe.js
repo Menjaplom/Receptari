@@ -20,9 +20,9 @@ function addIngredient() {
         '</li>');
 }
 
-function removeIngredient(obj) {
+/*function removeIngredient(obj) {
     obj.parentElement.remove(); // Remove the parent li element
-}
+}*/
 
 // Modify page layout
 const total_ingr = document.getElementById("ingredients_total");
