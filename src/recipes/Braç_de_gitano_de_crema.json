@@ -1,0 +1,31 @@
+{
+    "title": "Braç de gitano de crema",
+    "image": [
+        "Braç_de_gitano_de_crema.jpg"
+    ],
+    "category": [
+        "Postres"
+    ],
+    "tags": null,
+    "recipeYield": "8",
+    "prepTime": null,
+    "cookTime": null,
+    "tool": null,
+    "difficulty": null,
+    "components": {
+        "Crema pastissera": {
+            "Main": [],
+            "Component": {},
+            "Directions": {}
+        },
+        "Pa de pessic": {
+            "Main": [],
+            "Component": {},
+            "Directions": {}
+        }
+    },
+    "Directions": {
+        "0": [],
+        "1": []
+    }
+}
