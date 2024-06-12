@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 
 const props = defineProps({
   id_start: String,
-  media_list: Array<String>
+  media_list: Array<string>
 })
 
 const selected = ref(0)
@@ -57,14 +57,15 @@ function update_arrow(arrow: HTMLAnchorElement, next_slide: boolean) {
     <div class="slider">
       <li v-for="(item, index) in props.media_list" :key="index">
         <div
+          v-if="!video_supp.includes(item?.split('.').pop() || '')"
           :id="id_start + index"
           class="slide"
           :style="'background-image: url(' + item + ');'"
         ></div>
+        <div v-else :id="id_start + index" class="slide">
+          <video :src="item" controls></video>
+        </div>
       </li>
-      <!--<div id="slide-3" class="slide">
-        <video src="/templates/videos/mov_bbb.mp4" controls></video>
-      </div>-->
     </div>
 
     <div class="dots">
