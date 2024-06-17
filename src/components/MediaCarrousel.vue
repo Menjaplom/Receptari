@@ -17,23 +17,6 @@ function update_selected(new_sel: number) {
 }
 
 const video_supp = ['mp4', 'ogg', 'webm']
-
-function update_arrow(arrow: HTMLAnchorElement, next_slide: boolean) {
-  //let a = btn.parentElement;
-  arrow.href = ''
-
-  /*let dots = arrow.parentElement.children[3];
-        let a_href = a.href;
-        console.log(a_href);
-        [n_dots, curr_dot] = get_dot_state(dots);
-        let offset = next_slide ? 1 : -1;
-        let next = (Number(curr_dot) + offset) % n_dots;
-        if (next < 0) next += n_dots;
-        dots.children[next].classList.add('selected');
-        [slide, _] = a_href.split("-");
-        a.href = slide + '-' + next;
-        console.log(a.href);*/
-}
 </script>
 
 <template>
