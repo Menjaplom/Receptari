@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 import MediaCarrousel from './MediaCarrousel.vue'
+import MediaCarrouselData from '../../types/MediaCarrouselData'
 
+let order_counter = -1
 let id = 'first_media'
 let media: Array<string> = [
-  'https://images.unsplash.com/photo-1466853817435-05b43fe45b39?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2198&q=80',
   'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80',
   'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2842&q=80',
   'https://www.w3schools.com/html/mov_bbb.mp4'
 ]
 
+let list: Ref<Array<MediaCarrouselData>> = ref([])
+// Draggable logic
 const drag = ref(false)
-const list = ref(
+/*const list = ref(
   media.map((m, index) => {
     return { m, order: index + 1 }
   })
-)
+)*/
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -25,10 +29,35 @@ const dragOptions = computed(() => {
     ghostClass: 'ghost'
   }
 })
+
+// Carrousel input logic
+function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+
+  if (!input.files?.length) {
+    return
+  }
+
+  for (const file of input.files) {
+    list.value.push({ file: file, url: URL.createObjectURL(file), order: ++order_counter })
+  }
+}
 </script>
 
 <template>
   <h1>Media List</h1>
+  <div>
+    <label for="image_uploads">Choose images to upload (PNG, JPG)</label>
+    <input
+      type="file"
+      id="image_uploads"
+      name="image_uploads"
+      accept=".jpg, .jpeg, .png"
+      multiple
+      v-on:change="onFileChange"
+    />
+  </div>
+
   <draggable
     class="list-group"
     tag="ul"
@@ -45,7 +74,7 @@ const dragOptions = computed(() => {
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        {{ element.m }}
+        {{ element.file.name }}
       </li>
     </template>
   </draggable>
@@ -53,7 +82,7 @@ const dragOptions = computed(() => {
     :id_start="id"
     :media_list="
       list.map((m) => {
-        return m.m
+        return m.url
       })
     "
   />

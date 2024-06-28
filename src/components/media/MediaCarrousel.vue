@@ -25,6 +25,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
       :href="'#' + id_start + selected"
       @click="update_selected(selected - 1)"
       class="arrows-a arrows-a-prev"
+      v-if="length > 1"
     >
       <button class="arrows-btn">&lt;</button>
     </a>
@@ -33,6 +34,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
       :href="'#' + id_start + selected"
       @click="update_selected(selected + 1)"
       class="arrows-a arrows-a-next"
+      v-if="length > 1"
     >
       <button class="arrows-btn">&gt;</button>
     </a>
@@ -51,7 +53,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
       </li>
     </div>
 
-    <div class="dots">
+    <div class="dots" v-if="length > 1">
       <li v-for="(_, index) in props.media_list" :key="index">
         <a
           :href="'#' + id_start + index"
