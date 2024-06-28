@@ -7,20 +7,16 @@ import MediaCarrouselData from '../../types/MediaCarrouselData'
 
 let order_counter = -1
 let id = 'first_media'
-let media: Array<string> = [
+// TODO: REMOVE THIS EXAMPLE IMAGES
+/*let media: Array<string> = [
   'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80',
   'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2842&q=80',
   'https://www.w3schools.com/html/mov_bbb.mp4'
-]
+]*/
 
 let list: Ref<Array<MediaCarrouselData>> = ref([])
 // Draggable logic
 const drag = ref(false)
-/*const list = ref(
-  media.map((m, index) => {
-    return { m, order: index + 1 }
-  })
-)*/
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -31,6 +27,12 @@ const dragOptions = computed(() => {
 })
 
 // Carrousel input logic
+const media_urls = computed(() => {
+  return list.value.map((m) => {
+    return m.url
+  })
+})
+
 function onFileChange(e: Event) {
   const input = e.target as HTMLInputElement
 
@@ -41,6 +43,19 @@ function onFileChange(e: Event) {
   for (const file of input.files) {
     list.value.push({ file: file, url: URL.createObjectURL(file), order: ++order_counter })
   }
+}
+
+function removeFile(order: number) {
+  console.log(`order: ${order} .`)
+  for (let i = 0; i < list.value.length; ++i) {
+    console.log(`i: ${i} .`)
+    if (list.value[i].order === order) {
+      console.log(`value ${i} is about to be spliced.`)
+      list.value.splice(i, 1)
+      break
+    }
+  }
+  console.log(`array ${JSON.stringify(list.value)} .`)
 }
 </script>
 
@@ -74,18 +89,12 @@ function onFileChange(e: Event) {
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        {{ element.file.name }}
+        <span>{{ element.file.name }}</span>
+        <button @click="removeFile(element.order)">X</button>
       </li>
     </template>
   </draggable>
-  <MediaCarrousel
-    :id_start="id"
-    :media_list="
-      list.map((m) => {
-        return m.url
-      })
-    "
-  />
+  <MediaCarrousel :id_start="id" :media_list="media_urls" />
 </template>
 
 <style>
