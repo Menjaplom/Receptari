@@ -5,8 +5,10 @@ const props = defineProps({
   id_start: String,
   media_list: Array<string>
 })
+const emit = defineEmits(['selected'])
 
 const selected = ref(0)
+emit('selected', selected.value)
 const id_start = props.id_start + '-'
 const length = computed(() => {
   return props.media_list?.length || 0
@@ -14,6 +16,7 @@ const length = computed(() => {
 
 function update_selected(new_sel: number) {
   selected.value = (new_sel + length.value) % length.value
+  emit('selected', selected.value)
 }
 
 const video_supp = ['mp4', 'ogg', 'webm']

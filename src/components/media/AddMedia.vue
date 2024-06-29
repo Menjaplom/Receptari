@@ -6,7 +6,7 @@ import MediaCarrousel from './MediaCarrousel.vue'
 import MediaCarrouselData from '../../types/MediaCarrouselData'
 
 let order_counter = -1
-let id = 'first_media'
+let id = 'first_media' //To be passed down the parent component
 // TODO: REMOVE THIS EXAMPLE IMAGES
 /*let media: Array<string> = [
   'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80',
@@ -25,8 +25,8 @@ const dragOptions = computed(() => {
     ghostClass: 'ghost'
   }
 })
-
 // Carrousel input logic
+let selected = ref(0)
 const media_urls = computed(() => {
   return list.value.map((m) => {
     return m.url
@@ -89,12 +89,14 @@ function removeFile(order: number) {
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        <span>{{ element.file.name }}</span>
+        <span :class="{ bold: element.order === list[selected].order }">{{
+          element.file.name
+        }}</span>
         <button @click="removeFile(element.order)">X</button>
       </li>
     </template>
   </draggable>
-  <MediaCarrousel :id_start="id" :media_list="media_urls" />
+  <MediaCarrousel :id_start="id" :media_list="media_urls" @selected="(s) => (selected = s)" />
 </template>
 
 <style>
@@ -125,5 +127,9 @@ function removeFile(order: number) {
 
 .list-group-item i {
   cursor: pointer;
+}
+
+.bold {
+  font-weight: bold;
 }
 </style>
