@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Ingredient from '../types/Ingredient'
+import { defineModel } from 'vue'
 
-const props = defineProps({
-  ingredient: Ingredient
-})
-let ingredient = ref(props.ingredient)
+const ingredient = defineModel<string>('name', { default: '' })
+const units = defineModel<number>('units', { default: 0 })
+const measure = defineModel<string>('measure', { default: '' })
+
+//TODO: sanatize inputs
 </script>
 
 <template>
   <li>
-    <input type="text" placeholder="Ingredients" :value="ingredient?.name || ''" />
+    <input type="text" placeholder="Ingredients" v-model="ingredient" />
     <span>: </span>
-    <input type="text" placeholder="unitats* (opcional)" :value="ingredient?.units || ''" />
-    <input type="text" placeholder="mesura** (opcional)" :value="ingredient?.measure || ''" />
+    <input type="number" placeholder="unitats* (opcional)" v-model="units" />
+    <input type="text" placeholder="mesura** (opcional)" v-model="measure" />
   </li>
 </template>

@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 import Ingredient from '../types/Ingredient'
 import NewIngredient from './NewIngredient.vue'
 
-let ingredients: Array<Ingredient> = [
-  { name: 'ou' },
-  { name: 'sal', units: 1, measure: 'pensament' }
-]
+let order_counter = -1 // must be -1 to begin with
 
 const drag = ref(false)
-const list = ref(
-  ingredients.map((ingredient, index) => {
-    return { ingredient, order: index + 1 }
-  })
-)
+const list: Ref<Array<Ingredient>> = ref([])
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -23,6 +17,12 @@ const dragOptions = computed(() => {
     ghostClass: 'ghost'
   }
 })
+
+function addIngredient() {
+  if (list.value.length === 0 || list.value[list.value.length - 1].name !== '') {
+    list.value.push(new Ingredient(++order_counter, ''))
+  }
+}
 </script>
 
 <template>
@@ -39,15 +39,20 @@ const dragOptions = computed(() => {
     v-bind="dragOptions"
     @start="drag = true"
     @end="drag = false"
-    item-key="order"
+    item-key="key"
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        <NewIngredient :ingredient="element.ingredient" />
-        {{ element.ingredient }}
+        <NewIngredient
+          v-model:name="element.name"
+          v-model:units="element.units"
+          v-model:measure="element.measure"
+        />
+        {{ element }}
       </li>
     </template>
   </draggable>
+  <button @click="addIngredient">Add ingredient</button>
 </template>
 
 <style>
