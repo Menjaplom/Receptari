@@ -2,9 +2,12 @@
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import Ingredient from '../types/Ingredient'
+import Ingredient from '../../types/Ingredient'
 import NewIngredient from './NewIngredient.vue'
 
+const props = defineProps({
+  list_id: String
+})
 let order_counter = -1 // must be -1 to begin with
 
 const drag = ref(false)
@@ -23,6 +26,12 @@ function addIngredient() {
     list.value.push(new Ingredient(++order_counter, ''))
   }
 }
+
+function removeIngredient(key: number) {
+  list.value = list.value.filter((ingredient) => {
+    return ingredient.key !== key
+  })
+}
 </script>
 
 <template>
@@ -40,6 +49,7 @@ function addIngredient() {
     @start="drag = true"
     @end="drag = false"
     item-key="key"
+    group="adeu"
   >
     <template #item="{ element }">
       <li class="list-group-item">
@@ -48,6 +58,7 @@ function addIngredient() {
           v-model:units="element.units"
           v-model:measure="element.measure"
         />
+        <button @click="removeIngredient(element.key)">X</button>
         {{ element }}
       </li>
     </template>

@@ -7,12 +7,6 @@ import MediaCarrouselData from '../../types/MediaCarrouselData'
 
 let order_counter = -1
 let id = 'first_media' //To be passed down the parent component
-// TODO: REMOVE THIS EXAMPLE IMAGES
-/*let media: Array<string> = [
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80',
-  'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2842&q=80',
-  'https://www.w3schools.com/html/mov_bbb.mp4'
-]*/
 
 let list: Ref<Array<MediaCarrouselData>> = ref([])
 // Draggable logic
@@ -86,6 +80,7 @@ function removeFile(order: number) {
     @start="drag = true"
     @end="drag = false"
     item-key="order"
+    group="holi"
   >
     <template #item="{ element }">
       <li class="list-group-item">

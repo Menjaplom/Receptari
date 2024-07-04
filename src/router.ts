@@ -1,6 +1,6 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
 import RecipeList from './components/RecipeList.vue'
-import NewRecipe from './components/NewRecipe.vue'
+import NewRecipe from './components/newRecipe/NewRecipe.vue'
 
 const routes = [
   { path: '/', component: RecipeList },
