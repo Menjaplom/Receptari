@@ -6,8 +6,10 @@ import Ingredient from '../../types/Ingredient'
 import NewIngredient from './NewIngredient.vue'
 
 const props = defineProps({
-  list_id: String
+  parent_id: String,
+  n_id: Number
 })
+const id = props.parent_id + 'newIngredientList' + props.n_id
 let order_counter = -1 // must be -1 to begin with
 
 const drag = ref(false)
@@ -49,7 +51,7 @@ function removeIngredient(key: number) {
     @start="drag = true"
     @end="drag = false"
     item-key="key"
-    group="adeu"
+    :group="id"
   >
     <template #item="{ element }">
       <li class="list-group-item">

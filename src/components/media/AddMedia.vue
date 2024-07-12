@@ -5,10 +5,14 @@ import type { Ref } from 'vue'
 import MediaCarrousel from './MediaCarrousel.vue'
 import MediaCarrouselData from '../../types/MediaCarrouselData'
 
-let order_counter = -1
-let id = 'first_media' //To be passed down the parent component
+const props = defineProps({
+  parent_id: String,
+  n_id: Number
+})
+const list = defineModel<Array<MediaCarrouselData>>('media_list', { default: [] })
 
-let list: Ref<Array<MediaCarrouselData>> = ref([])
+const id = props.parent_id + 'addMedia' + props.n_id
+
 // Draggable logic
 const drag = ref(false)
 const dragOptions = computed(() => {
@@ -22,51 +26,25 @@ const dragOptions = computed(() => {
 // Carrousel input logic
 let selected = ref(0)
 const media_urls = computed(() => {
-  return list.value.map((m) => {
-    return m.url
-  })
+  return (
+    list.value?.map((m) => {
+      return m.url
+    }) || []
+  )
 })
 
-function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
-
-  if (!input.files?.length) {
-    return
-  }
-
-  for (const file of input.files) {
-    list.value.push({ file: file, url: URL.createObjectURL(file), order: ++order_counter })
-  }
-}
-
 function removeFile(order: number) {
-  console.log(`order: ${order} .`)
-  for (let i = 0; i < list.value.length; ++i) {
-    console.log(`i: ${i} .`)
-    if (list.value[i].order === order) {
-      console.log(`value ${i} is about to be spliced.`)
+  for (let i = 0; i < (list.value.length || 0); ++i) {
+    if ((list.value[i].order || -1) === order) {
       list.value.splice(i, 1)
+      if (i <= selected.value) selected.value -= 1
       break
     }
   }
-  console.log(`array ${JSON.stringify(list.value)} .`)
 }
 </script>
 
 <template>
-  <h1>Media List</h1>
-  <div>
-    <label for="image_uploads">Choose images to upload (PNG, JPG)</label>
-    <input
-      type="file"
-      id="image_uploads"
-      name="image_uploads"
-      accept=".jpg, .jpeg, .png"
-      multiple
-      v-on:change="onFileChange"
-    />
-  </div>
-
   <draggable
     class="list-group"
     tag="ul"
@@ -80,7 +58,7 @@ function removeFile(order: number) {
     @start="drag = true"
     @end="drag = false"
     item-key="order"
-    group="holi"
+    :group="id"
   >
     <template #item="{ element }">
       <li class="list-group-item">

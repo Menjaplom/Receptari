@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import NewIngredientList from './NewIngredientList.vue'
 import AddMedia from '../media/AddMedia.vue'
+import NewDirection from './NewDirection.vue'
+
+let parent_id = 'newRecipe'
 </script>
 
 <template>
@@ -107,15 +110,13 @@ import AddMedia from '../media/AddMedia.vue'
     <div>
       <div>
         <h3>Ingredients</h3>
-        <NewIngredientList :list_id="'ingredient_list'" />
+        <NewIngredientList :parent_id="parent_id" :n_id="0" />
       </div>
     </div>
 
     <div>
       <h3>Directions</h3>
-      <ul class="directions">
-        <li>Direction 01</li>
-      </ul>
+      <NewDirection :parent_id="parent_id" :n_id="2" />
     </div>
   </div>
 
