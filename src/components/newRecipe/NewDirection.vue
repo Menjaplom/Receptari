@@ -81,7 +81,7 @@ function onFileChange(e: Event, d: NewDirection) {
           hidden
         />
         <button @click="removeDirection(element.key)">X</button>
-        <AddMedia v-model:media_list="element.media" />
+        <AddMedia v-model:media_list="element.media" :parent_id="id" :n_id="element.key" />
         {{ element }}
       </li>
     </template>
