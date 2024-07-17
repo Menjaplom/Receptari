@@ -37,7 +37,7 @@ function removeFile(order: number) {
   for (let i = 0; i < (list.value.length || 0); ++i) {
     if ((list.value[i].order || -1) === order) {
       list.value.splice(i, 1)
-      if (i <= selected.value) selected.value -= 1
+      if (i <= selected.value && selected.value !== 0) selected.value -= 1
       break
     }
   }

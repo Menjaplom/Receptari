@@ -38,13 +38,16 @@ function removeDirection(key: number) {
 // Add URL to carrousel
 function onFileChange(e: Event, d: NewDirection) {
   const input = e.target as HTMLInputElement
-
   if (!input.files?.length) {
     return
   }
 
   for (const file of input.files) {
-    d.media.push({ file: file, url: URL.createObjectURL(file), order: ++order_counter })
+    d.media.push({
+      file: file,
+      url: URL.createObjectURL(file),
+      order: ++order_counter
+    })
   }
 }
 </script>
@@ -70,11 +73,11 @@ function onFileChange(e: Event, d: NewDirection) {
       <li class="list-group-item">
         <span class="handle"></span>
         <input type="text" v-model="element.description" />
-        <label for="image_uploads" class="addImage"></label>
+        <label :for="'image_uploads_' + element.key" class="addImage"></label>
         <input
           type="file"
-          id="image_uploads"
-          name="image_uploads"
+          :id="'image_uploads_' + element.key"
+          :name="'image_uploads_' + element.key"
           accept=".jpg, .jpeg, .png"
           multiple
           v-on:change="onFileChange($event, element)"
