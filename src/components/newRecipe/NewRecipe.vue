@@ -2,24 +2,83 @@
 import NewIngredientList from './NewIngredientList.vue'
 import AddMedia from '../media/AddMedia.vue'
 import NewDirection from './NewDirection.vue'
+import type { RecipeInter } from '../../types/Recipe'
+import type { Ref } from 'vue'
+import { ref, computed } from 'vue'
 
 let parent_id = 'newRecipe'
+
+let newRecipe: Ref<RecipeInter> = ref({
+  title: '',
+  media: [],
+  category: [''], // Currently hardcoding a single value to keep it simple
+  tags: [''], // Currently hardcoding a single value to keep it simple
+  recipeYield: -1,
+  prepTime: '',
+  cookTime: '',
+  tools: [''], // Currently hardcoding a single value to keep it simple
+  difficulty: 0,
+  ingredients: [],
+  direction: [],
+  components: []
+})
+
+const composedRecipe = computed(() => {
+  if (newRecipe.value.components.length > 0) {
+    return true
+  }
+  return false
+})
+
+const totalIngredients = computed(() => {
+  if (composedRecipe.value) {
+    
+  }
+})
 </script>
 
 <template>
   <h2>New Recipe</h2>
   <div>
     <h3>Nom de la recepta</h3>
-    <input type="text" id="title" name="title" onblur="syncComponentName()" />
+    <input type="text" id="title" name="title" v-model="newRecipe.title" />
   </div>
 
   <img src="" alt="" id="main_image" />
+
   <div>
-    <h3>Tipus de recepta</h3>
-    <input type="radio" id="simple" name="recipe_type" onclick="showSimpleLayout()" checked />
-    <label for="simple">Senzilla</label>
-    <input type="radio" id="compound" name="recipe_type" onclick="showComplexLayout()" />
-    <label for="compound">Composta</label>
+    <h3>Categories</h3>
+    <input type="text" id="categories" name="categories" v-model="newRecipe.category[0]" />
+  </div>
+
+  <div>
+    <h3>Tags</h3>
+    <input type="text" id="tags" name="tags" v-model="newRecipe.tags[0]" />
+  </div>
+
+  <div>
+    <h3>Recipe yield</h3>
+    <input type="text" id="recipe_yield" name="recipe_yield" v-model="newRecipe.recipeYield" />
+  </div>
+
+  <div>
+    <h3>Preparation time</h3>
+    <input type="text" id="prep_time" name="prep_time" v-model="newRecipe.prepTime" />
+  </div>
+
+  <div>
+    <h3>Cook time</h3>
+    <input type="text" id="cook_time" name="cook_time" v-model="newRecipe.cookTime" />
+  </div>
+
+  <div>
+    <h3>Difficulty</h3>
+    <input type="text" id="difficulty" name="difficulty" v-model="newRecipe.difficulty" />
+  </div>
+
+  <div>
+    <h3>Tools</h3>
+    <input type="text" id="tools" name="tools" v-model="newRecipe.tools[0]" />
   </div>
 
   <div id="components_selector" style="display: none">
@@ -37,42 +96,7 @@ let parent_id = 'newRecipe'
     </div>
   </div>
 
-  <div>
-    <h3>Categories</h3>
-    <input type="text" id="categories" name="categories" />
-  </div>
-
-  <div>
-    <h3>Tags</h3>
-    <input type="text" id="tags" name="tags" />
-  </div>
-
-  <div>
-    <h3>Recipe yield</h3>
-    <input type="text" id="recipe_yield" name="recipe_yield" />
-  </div>
-
-  <div>
-    <h3>Preparation time</h3>
-    <input type="text" id="prep_time" name="prep_time" />
-  </div>
-
-  <div>
-    <h3>Cook time</h3>
-    <input type="text" id="cook_time" name="cook_time" />
-  </div>
-
-  <div>
-    <h3>Difficulty</h3>
-    <input type="text" id="difficulty" name="difficulty" />
-  </div>
-
-  <div>
-    <h3>Tools</h3>
-    <input type="text" id="tools" name="tools" />
-  </div>
-
-  <div id="ingredients_total" style="display: none">
+  <div id="ingredients_main" style="display: none">
     <h3>Total d'ingredients</h3>
     <ul>
       <li>
@@ -121,5 +145,4 @@ let parent_id = 'newRecipe'
   </div>
 
   <button onclick="">Save recipe</button>
-  <AddMedia />
 </template>

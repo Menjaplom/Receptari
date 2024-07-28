@@ -3,13 +3,13 @@ import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import MediaCarrousel from './MediaCarrousel.vue'
-import MediaCarrouselData from '../../types/MediaCarrouselData'
+import NewMediaData from '../../types/NewMediaData'
 
 const props = defineProps({
   parent_id: String,
   n_id: Number
 })
-const list = defineModel<Array<MediaCarrouselData>>('media_list', { default: [] })
+const list = defineModel<Array<NewMediaData>>('media_list', { default: [] })
 
 const id = props.parent_id + 'addMedia' + props.n_id
 

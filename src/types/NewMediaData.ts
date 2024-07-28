@@ -1,4 +1,4 @@
-class MediaCarrouselData {
+class NewMediaData {
   file: File
   url: string
   order: number
@@ -10,4 +10,4 @@ class MediaCarrouselData {
   }
 }
 
-export default MediaCarrouselData
+export default NewMediaData

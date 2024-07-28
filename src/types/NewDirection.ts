@@ -1,11 +1,11 @@
-import MediaCarrouselData from './MediaCarrouselData'
+import NewMediaData from './NewMediaData'
 
 class NewDirection {
   key: Number
   description: String
-  media: Array<MediaCarrouselData>
+  media: Array<NewMediaData>
 
-  constructor(key: number, description: string, media: Array<MediaCarrouselData>) {
+  constructor(key: number, description: string, media: Array<NewMediaData>) {
     this.key = key
     this.description = description
     this.media = media
