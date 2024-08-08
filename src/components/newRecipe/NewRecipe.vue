@@ -2,26 +2,26 @@
 import NewIngredientList from './NewIngredientList.vue'
 import AddMedia from '../media/AddMedia.vue'
 import NewDirection from './NewDirection.vue'
-import type { RecipeInter } from '../../types/Recipe'
+import NewRecipeType from '../../types/NewRecipe'
 import type { Ref } from 'vue'
 import { ref, computed } from 'vue'
 
 let parent_id = 'newRecipe'
 
 let newRecipe: Ref<RecipeInter> = ref({
-  title: '',
-  media: [],
-  category: [''], // Currently hardcoding a single value to keep it simple
-  tags: [''], // Currently hardcoding a single value to keep it simple
-  recipeYield: -1,
-  prepTime: '',
-  cookTime: '',
-  tools: [''], // Currently hardcoding a single value to keep it simple
-  difficulty: 0,
-  ingredients: [],
-  direction: [],
-  components: []
-})
+    title: '',
+    media: [],
+    category: [''], // Currently hardcoding a single value to keep it simple
+    tags: [''], // Currently hardcoding a single value to keep it simple
+    recipeYield: -1,
+    prepTime: '',
+    cookTime: '',
+    tools: [''], // Currently hardcoding a single value to keep it simple
+    difficulty: 0,
+    ingredients: [],
+    direction: [],
+    components: []
+  })
 
 const composedRecipe = computed(() => {
   if (newRecipe.value.components.length > 0) {
@@ -32,7 +32,7 @@ const composedRecipe = computed(() => {
 
 const totalIngredients = computed(() => {
   if (composedRecipe.value) {
-    
+
   }
 })
 </script>
@@ -134,15 +134,21 @@ const totalIngredients = computed(() => {
     <div>
       <div>
         <h3>Ingredients</h3>
-        <NewIngredientList :parent_id="parent_id" :n_id="0" />
+        <NewIngredientList
+          :parent_id="parent_id"
+          :n_id="0"
+          :ingredient_list="newRecipe.ingredients"
+        />
       </div>
     </div>
 
     <div>
       <h3>Directions</h3>
-      <NewDirection :parent_id="parent_id" :n_id="2" />
+      <NewDirection :parent_id="parent_id" :n_id="2" :direction_list="newRecipe.direction" />
     </div>
   </div>
 
   <button onclick="">Save recipe</button>
+
+  <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>
 </template>

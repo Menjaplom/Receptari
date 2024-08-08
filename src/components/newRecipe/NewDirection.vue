@@ -13,7 +13,8 @@ const id = props.parent_id + 'newDirectionList' + props.n_id
 let order_counter = 0
 
 const drag = ref(false)
-const list: Ref<Array<NewDirection>> = ref([])
+
+const list = defineModel<Array<NewDirection>>('direction_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -30,9 +31,12 @@ function addDirection() {
 }
 
 function removeDirection(key: number) {
-  list.value = list.value.filter((direction) => {
-    return direction.key !== key
-  })
+  for (let i = 0; i < list.value.length; i++) {
+    if (list.value[i].key === key) {
+      list.value.splice(i, 1)
+      break
+    }
+  }
 }
 
 // Add URL to carrousel

@@ -3,7 +3,6 @@ import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import Ingredient from '../../types/Ingredient'
-import NewIngredient from './NewIngredient.vue'
 
 const props = defineProps({
   parent_id: String,
@@ -13,7 +12,7 @@ const id = props.parent_id + 'newIngredientList' + props.n_id
 let order_counter = -1 // must be -1 to begin with
 
 const drag = ref(false)
-const list: Ref<Array<Ingredient>> = ref([])
+const list = defineModel<Array<Ingredient>>('ingredient_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -25,6 +24,7 @@ const dragOptions = computed(() => {
 
 function addIngredient() {
   if (list.value.length === 0 || list.value[list.value.length - 1].name !== '') {
+    // TODO: Update to no position can be ''
     list.value.push(new Ingredient(++order_counter, ''))
   }
 }
@@ -55,11 +55,10 @@ function removeIngredient(key: number) {
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        <NewIngredient
-          v-model:name="element.name"
-          v-model:units="element.units"
-          v-model:measure="element.measure"
-        />
+        <input type="text" placeholder="Ingredients" v-model="element.name" />
+        <span>: </span>
+        <input type="number" placeholder="unitats* (opcional)" v-model="element.units" />
+        <input type="text" placeholder="mesura** (opcional)" v-model="element.measure" />
         <button @click="removeIngredient(element.key)">X</button>
         {{ element }}
       </li>
