@@ -10,4 +10,9 @@ class NewMediaData {
   }
 }
 
+export type NewMediaDataType = {
+  file: File
+  url: string
+  order: number
+}
 export default NewMediaData

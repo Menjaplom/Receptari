@@ -4,6 +4,13 @@ interface IngredientInter {
   measure?: string
 }
 
+export type NewIngredientType = {
+  key: number
+  name: string
+  units?: number
+  measure?: string
+}
+
 export function isIngredientInter(value: unknown): value is IngredientInter {
   if (!value || typeof value !== 'object') {
     return false

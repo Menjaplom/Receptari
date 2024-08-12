@@ -1,4 +1,4 @@
-import NewMediaData from './NewMediaData'
+import NewMediaData, { type NewMediaDataType } from './NewMediaData'
 
 interface NewDirectionInter {
   key: Number
@@ -17,6 +17,12 @@ export function isNewDirectionInter(value: unknown): value is NewDirectionInter 
     Array.isArray(object.media) &&
     object.media.every((m) => typeof m === 'string')*/ // TODO: Check whether the media type is correct
   )
+}
+
+export type NewDirectionType = {
+  key: Number
+  description: String
+  media: Array<NewMediaDataType>
 }
 
 class NewDirection {

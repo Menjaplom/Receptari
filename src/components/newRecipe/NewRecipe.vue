@@ -2,13 +2,19 @@
 import NewIngredientList from './NewIngredientList.vue'
 import AddMedia from '../media/AddMedia.vue'
 import NewDirection from './NewDirection.vue'
-import NewRecipeType from '../../types/NewRecipe'
+import type { NewRecipeType } from '../../types/NewRecipe'
 import type { Ref } from 'vue'
 import { ref, computed } from 'vue'
 
 let parent_id = 'newRecipe'
 
-let newRecipe: Ref<RecipeInter> = ref({
+const props = defineProps<{
+  newRecipe: NewRecipeType
+}>()
+
+let newRecipe: Ref<NewRecipeType> = ref(props.newRecipe)
+/*let newRecipe: Ref<NewRecipe> = ref(
+  new NewRecipe({
     title: '',
     media: [],
     category: [''], // Currently hardcoding a single value to keep it simple
@@ -22,6 +28,7 @@ let newRecipe: Ref<RecipeInter> = ref({
     direction: [],
     components: []
   })
+)*/
 
 const composedRecipe = computed(() => {
   if (newRecipe.value.components.length > 0) {

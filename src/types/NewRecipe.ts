@@ -1,5 +1,5 @@
-import Ingredient, { isIngredientInter } from './Ingredient'
-import NewDirection, { isNewDirectionInter } from './NewDirection'
+import Ingredient, { isIngredientInter, type NewIngredientType } from './Ingredient'
+import NewDirection, { isNewDirectionInter, type NewDirectionType } from './NewDirection'
 
 export interface NewRecipeInter {
   title: string
@@ -26,9 +26,9 @@ export type NewRecipeType = {
   cookTime: String
   tools: Array<String>
   difficulty: Number
-  ingredients: Array<Ingredient>
-  direction: Array<NewDirection>
-  components: Array<NewRecipe>
+  ingredients: Array<NewIngredientType>
+  direction: Array<NewDirectionType>
+  components: Array<NewRecipeType>
 }
 
 export function isNewRecipeInter(value: unknown): value is NewRecipeInter {
