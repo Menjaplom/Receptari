@@ -69,7 +69,7 @@ function removeFile(order: number) {
       </li>
     </template>
   </draggable>
-  <MediaCarrousel :id_start="id" :media_list="media_urls" @selected="(s) => (selected = s)" />
+  <MediaCarrousel :id_start="id" :media_list="media_urls" v-model="selected" />
 </template>
 
 <style>

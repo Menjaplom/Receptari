@@ -1,17 +1,14 @@
-interface IngredientInter {
-  name: string
-  units?: number
-  measure?: string
-}
+import { z } from 'zod'
 
-export type NewIngredientType = {
-  key: number
-  name: string
-  units?: number
-  measure?: string
-}
+export const ingredientSchema = z.object({
+  name: z.string(),
+  units: z.number().optional(),
+  measure: z.string().optional()
+})
 
-export function isIngredientInter(value: unknown): value is IngredientInter {
+export type IngredientType = z.infer<typeof ingredientSchema>
+
+/*export function isIngredientInter(value: unknown): value is IngredientInter {
   if (!value || typeof value !== 'object') {
     return false
   }
@@ -22,7 +19,7 @@ export function isIngredientInter(value: unknown): value is IngredientInter {
     typeof object.units === 'number' &&
     typeof object.measure === 'string'
   )
-}
+}*/
 
 class Ingredient {
   key: number
