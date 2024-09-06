@@ -2,7 +2,7 @@
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import Ingredient from '../../types/Ingredient'
+import { type NewIngredientType } from '../../types/Ingredient'
 
 const props = defineProps({
   parent_id: String,
@@ -12,7 +12,7 @@ const id = props.parent_id + 'newIngredientList' + props.n_id
 let order_counter = -1 // must be -1 to begin with
 
 const drag = ref(false)
-const list = defineModel<Array<Ingredient>>('ingredient_list', { default: [] })
+const list = defineModel<Array<NewIngredientType>>('ingredient_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -25,7 +25,7 @@ const dragOptions = computed(() => {
 function addIngredient() {
   if (list.value.length === 0 || list.value[list.value.length - 1].name !== '') {
     // TODO: Update to no position can be ''
-    list.value.push(new Ingredient(++order_counter, ''))
+    list.value.push({ key: ++order_counter, name: '' })
   }
 }
 

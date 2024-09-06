@@ -8,19 +8,8 @@ export const ingredientSchema = z.object({
 
 export type IngredientType = z.infer<typeof ingredientSchema>
 
-/*export function isIngredientInter(value: unknown): value is IngredientInter {
-  if (!value || typeof value !== 'object') {
-    return false
-  }
-  const object = value as Record<string, unknown>
-
-  return (
-    typeof object.name === 'string' &&
-    typeof object.units === 'number' &&
-    typeof object.measure === 'string'
-  )
-}*/
-
+export type NewIngredientType = IngredientType & { key: number }
+/*
 class Ingredient {
   key: number
   name: string
@@ -35,4 +24,4 @@ class Ingredient {
   }
 }
 
-export default Ingredient
+export default Ingredient*/

@@ -2,33 +2,17 @@
 import NewIngredientList from './NewIngredientList.vue'
 import AddMedia from '../media/AddMedia.vue'
 import NewDirection from './NewDirection.vue'
-import type { NewRecipeType } from '../../types/NewRecipe'
+import NewRecipe from '../../types/NewRecipe'
 import type { Ref } from 'vue'
 import { ref, computed } from 'vue'
 
 let parent_id = 'newRecipe'
 
 const props = defineProps<{
-  newRecipe: NewRecipeType
+  newRecipe: NewRecipe
 }>()
 
-let newRecipe: Ref<NewRecipeType> = ref(props.newRecipe)
-/*let newRecipe: Ref<NewRecipe> = ref(
-  new NewRecipe({
-    title: '',
-    media: [],
-    category: [''], // Currently hardcoding a single value to keep it simple
-    tags: [''], // Currently hardcoding a single value to keep it simple
-    recipeYield: -1,
-    prepTime: '',
-    cookTime: '',
-    tools: [''], // Currently hardcoding a single value to keep it simple
-    difficulty: 0,
-    ingredients: [],
-    direction: [],
-    components: []
-  })
-)*/
+let newRecipe: Ref<NewRecipe> = ref(props.newRecipe)
 
 const composedRecipe = computed(() => {
   if (newRecipe.value.components.length > 0) {
@@ -37,10 +21,10 @@ const composedRecipe = computed(() => {
   return false
 })
 
-const totalIngredients = computed(() => {
-  if (composedRecipe.value) {
-
-  }
+const debugDirections = computed(() => {
+  alert('hello?')
+  console.log(JSON.stringify(newRecipe.value.direction))
+  return newRecipe.value.direction
 })
 </script>
 

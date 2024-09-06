@@ -2,7 +2,7 @@
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import NewDirection from '../../types/NewDirection'
+import { type NewDirectionType } from '../../types/NewDirection'
 import AddMedia from '../media/AddMedia.vue'
 
 const props = defineProps({
@@ -14,7 +14,7 @@ let order_counter = 0
 
 const drag = ref(false)
 
-const list = defineModel<Array<NewDirection>>('direction_list', { default: [] })
+const list = defineModel<Array<NewDirectionType>>('direction_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -26,7 +26,7 @@ const dragOptions = computed(() => {
 
 function addDirection() {
   if (list.value.length === 0 || list.value[list.value.length - 1].description !== '') {
-    list.value.push(new NewDirection(++order_counter, '', []))
+    list.value.push({ key: ++order_counter, description: '', media: [] })
   }
 }
 
@@ -40,7 +40,7 @@ function removeDirection(key: number) {
 }
 
 // Add URL to carrousel
-function onFileChange(e: Event, d: NewDirection) {
+function onFileChange(e: Event, d: NewDirectionType) {
   const input = e.target as HTMLInputElement
   if (!input.files?.length) {
     return

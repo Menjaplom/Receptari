@@ -1,7 +1,8 @@
-import Ingredient, { isIngredientInter, type NewIngredientType } from './Ingredient'
-import NewDirection, { isNewDirectionInter, type NewDirectionType } from './NewDirection'
-
-export interface NewRecipeInter {
+import { type NewIngredientType } from './Ingredient'
+import { type NewDirectionType } from './NewDirection'
+import type { NewMediaDataType } from './NewMediaData'
+import { type RecipeType } from './Recipe'
+/*export interface NewRecipeInter {
   title: string
   media: Array<String>
   category: Array<String>
@@ -62,11 +63,11 @@ export function isNewRecipeInter(value: unknown): value is NewRecipeInter {
 
 export function isRecipeInterArray(value: unknown): value is Array<NewRecipeInter> {
   return Array.isArray(value) && value.every(isNewRecipeInter)
-}
+}*/
 
 class NewRecipe {
   title: String
-  media: Array<String>
+  media: Array<NewMediaDataType>
   category: Array<String>
   tags: Array<String>
   recipeYield: Number
@@ -74,23 +75,37 @@ class NewRecipe {
   cookTime: String
   tools: Array<String>
   difficulty: Number
-  ingredients: Array<Ingredient>
-  direction: Array<NewDirection>
+  ingredients: Array<NewIngredientType>
+  direction: Array<NewDirectionType>
   components: Array<NewRecipe>
 
-  constructor(recipeInter: NewRecipeInter) {
-    this.title = recipeInter['title']
-    this.media = recipeInter['media']
-    this.category = recipeInter['category']
-    this.tags = recipeInter['tags']
-    this.recipeYield = recipeInter['recipeYield']
-    this.prepTime = recipeInter['prepTime']
-    this.cookTime = recipeInter['cookTime']
-    this.tools = recipeInter['tools']
-    this.difficulty = recipeInter['difficulty']
-    this.ingredients = recipeInter['ingredients']
-    this.direction = recipeInter['direction']
-    this.components = recipeInter['components']
+  constructor(recipeInter: RecipeType) {
+    this.title = recipeInter.title
+    this.media = recipeInter.media.map((val, idx) => {
+      return { file: undefined, url: val, order: idx }
+    })
+    this.category = recipeInter.category
+    this.tags = recipeInter.tags
+    this.recipeYield = recipeInter.recipeYield
+    this.prepTime = recipeInter.prepTime
+    this.cookTime = recipeInter.cookTime
+    this.tools = recipeInter.tools
+    this.difficulty = recipeInter.difficulty
+    this.ingredients = recipeInter.ingredients.map((val, idx) => {
+      return { name: val.name, units: val.units, measure: val.measure, key: idx }
+    })
+    this.direction = recipeInter.direction.map((val, idx) => {
+      return {
+        description: val.description,
+        media: val.media.map((m_val, m_idx) => {
+          return { file: undefined, url: m_val, order: m_idx }
+        }),
+        key: idx
+      }
+    })
+    this.components = recipeInter.components.map((val) => {
+      return new NewRecipe(val)
+    })
   }
 }
 

@@ -2,21 +2,6 @@ import Ingredient, { type IngredientType, ingredientSchema } from './Ingredient'
 import Direction, { directionSchema, isDirectionInter } from './Direction'
 import { z } from 'zod'
 
-export interface RecipeInter {
-  title: string
-  media: Array<String>
-  category: Array<String>
-  tags: Array<String>
-  recipeYield: Number
-  prepTime: String
-  cookTime: String
-  tools: Array<String>
-  difficulty: Number
-  ingredients: Array<Ingredient>
-  direction: Array<Direction>
-  components: Array<Recipe>
-}
-
 export const recipeBaseSchema = z.object({
   title: z.string(),
   media: z.string().array(),
@@ -31,7 +16,7 @@ export const recipeBaseSchema = z.object({
   direction: z.array(directionSchema)
 })
 
-type RecipeType = z.infer<typeof recipeBaseSchema> & {
+export type RecipeType = z.infer<typeof recipeBaseSchema> & {
   components: RecipeType[]
 }
 
@@ -73,7 +58,7 @@ export function isRecipeInterArray(value: unknown): value is Array<RecipeInter> 
 }*/
 
 class Recipe {
-  title: String
+  /*title: String
   media: Array<String>
   category: Array<String>
   tags: Array<String>
@@ -99,7 +84,7 @@ class Recipe {
     this.ingredients = recipeInter['ingredients']
     this.direction = recipeInter['direction']
     this.components = recipeInter['components']
-  }
+  }*/
 }
 
 export default Recipe

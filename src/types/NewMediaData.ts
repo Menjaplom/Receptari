@@ -1,4 +1,4 @@
-class NewMediaData {
+/*class NewMediaData {
   file: File
   url: string
   order: number
@@ -9,10 +9,11 @@ class NewMediaData {
     this.order = order
   }
 }
+  
+export default NewMediaData*/
 
 export type NewMediaDataType = {
-  file: File
   url: string
   order: number
+  file?: File
 }
-export default NewMediaData
