@@ -1,18 +1,31 @@
 <script setup lang="ts">
 import NewIngredientList from './NewIngredientList.vue'
-import AddMedia from '../media/AddMedia.vue'
 import NewDirection from './NewDirection.vue'
 import NewRecipe from '../../types/NewRecipe'
+import SavePopup from './SavePopup.vue'
 import type { Ref } from 'vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { recipeSchema, type RecipeType } from '@/types/Recipe'
 
 let parent_id = 'newRecipe'
 
 const props = defineProps<{
-  newRecipe: NewRecipe
+  recipe: RecipeType
 }>()
 
-let newRecipe: Ref<NewRecipe> = ref(props.newRecipe)
+let test_recipe: RecipeType = props.recipe
+let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe))
+fetch('/static/recipes/braç_de_gitano_de_crema/Braç_de_gitano_de_crema.json')
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data)
+    test_recipe = recipeSchema.parse(data)
+    console.log(test_recipe)
+    newRecipe.value = new NewRecipe(test_recipe)
+  })
+  .catch((error) => console.error('Error loading JSON file', error))
+
+let savePopped: Ref<boolean> = ref(false)
 
 const composedRecipe = computed(() => {
   if (newRecipe.value.components.length > 0) {
@@ -23,9 +36,16 @@ const composedRecipe = computed(() => {
 
 const debugDirections = computed(() => {
   alert('hello?')
-  console.log(JSON.stringify(newRecipe.value.direction))
-  return newRecipe.value.direction
+  console.log(JSON.stringify(newRecipe.value.directions))
+  return newRecipe.value.directions
 })
+
+function saveRecipe() {
+  savePopped.value = true
+  //let saveRecipe = { ...newRecipe.value.outputRecipe() }
+  let saveRecipe = JSON.stringify(newRecipe.value.outputRecipe())
+  console.log(saveRecipe)
+}
 </script>
 
 <template>
@@ -69,7 +89,7 @@ const debugDirections = computed(() => {
 
   <div>
     <h3>Tools</h3>
-    <input type="text" id="tools" name="tools" v-model="newRecipe.tools[0]" />
+    <input type="text" id="tools" name="tools" v-model="newRecipe.tools" />
   </div>
 
   <div id="components_selector" style="display: none">
@@ -135,11 +155,12 @@ const debugDirections = computed(() => {
 
     <div>
       <h3>Directions</h3>
-      <NewDirection :parent_id="parent_id" :n_id="2" :direction_list="newRecipe.direction" />
+      <NewDirection :parent_id="parent_id" :n_id="2" :direction_list="newRecipe.directions" />
     </div>
   </div>
 
-  <button onclick="">Save recipe</button>
+  <button @click="saveRecipe()">Save recipe</button>
+  <SavePopup v-model:visible="savePopped" />
 
   <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>
 </template>

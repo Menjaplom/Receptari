@@ -1,8 +1,8 @@
 import { type NewMediaDataType } from './NewMediaData'
 
 export type NewDirectionType = {
-  key: Number
-  description: String
+  key: number
+  description: string
   media: Array<NewMediaDataType>
 }
 /*

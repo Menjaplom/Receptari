@@ -1,0 +1,25 @@
+{
+  "title": "Braç de gitano de crema",
+  "media": ["Braç_de_gitano_de_crema.jpg"],
+  "category": ["Postres"],
+  "tags": [],
+  "recipeYield": 8,
+  "prepTime": "5",
+  "cookTime": "5",
+  "tools": [],
+  "difficulty": 1,
+  "ingredients": [
+    {
+      "name": "farina",
+      "units": 100,
+      "measure": "g"
+    }
+  ],
+  "directions": [
+    {
+      "description": "Poses farina i pregues a déu que ho converteixi en postre.",
+      "media": []
+    }
+  ],
+  "components": []
+}

@@ -1,5 +1,5 @@
-import Ingredient, { type IngredientType, ingredientSchema } from './Ingredient'
-import Direction, { directionSchema, isDirectionInter } from './Direction'
+import { type IngredientType, ingredientSchema } from './Ingredient'
+import { directionSchema } from './Direction'
 import { z } from 'zod'
 
 export const recipeBaseSchema = z.object({
@@ -7,13 +7,13 @@ export const recipeBaseSchema = z.object({
   media: z.string().array(),
   category: z.string().array(),
   tags: z.string().array(),
-  recipeYield: z.number(),
-  prepTime: z.string(),
-  cookTime: z.string(),
-  tools: z.string().array(),
-  difficulty: z.number(),
+  recipeYield: z.number().optional(),
+  prepTime: z.string().optional(),
+  cookTime: z.string().optional(),
+  tools: z.string().array().optional(),
+  difficulty: z.number().optional(),
   ingredients: z.array(ingredientSchema),
-  direction: z.array(directionSchema)
+  directions: z.array(directionSchema)
 })
 
 export type RecipeType = z.infer<typeof recipeBaseSchema> & {
