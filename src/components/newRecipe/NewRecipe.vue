@@ -4,8 +4,10 @@ import NewDirection from './NewDirection.vue'
 import NewRecipe from '../../types/NewRecipe'
 import SavePopup from './SavePopup.vue'
 import type { Ref } from 'vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { recipeSchema, type RecipeType } from '@/types/Recipe'
+import { Octokit } from 'octokit'
+import { branchLit, repoLit, usernameLit } from '@/literals'
 
 let parent_id = 'newRecipe'
 
@@ -40,10 +42,14 @@ const debugDirections = computed(() => {
   return newRecipe.value.directions
 })
 
-function saveRecipe() {
-  savePopped.value = true
-  //let saveRecipe = { ...newRecipe.value.outputRecipe() }
+async function saveRecipe() {
+  const octokit = new Octokit({ auth: localStorage.getItem('tokenReceptari') })
+  const user: string = inject(usernameLit) as string
+  const repo: string = inject(repoLit) as string
+  const branch: string = inject(branchLit) as string
+
   let saveRecipe = JSON.stringify(newRecipe.value.outputRecipe())
+
   console.log(saveRecipe)
 }
 </script>
@@ -159,8 +165,8 @@ function saveRecipe() {
     </div>
   </div>
 
-  <button @click="saveRecipe()">Save recipe</button>
-  <SavePopup v-model:visible="savePopped" />
+  <button @click="savePopped = true">Save recipe</button>
+  <SavePopup v-model:visible="savePopped" @run-process="saveRecipe()" />
 
   <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>
 </template>

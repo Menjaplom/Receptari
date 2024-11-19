@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import HeaderBar from './components/HeaderBar.vue'
+import { ref, provide } from 'vue'
+import type { Ref } from 'vue'
+import { loggedInLit, usernameLit, repoLit, branchLit, commitMsgLit } from './literals'
+
+const loggedInRef: Ref<boolean> = ref(false)
+provide(loggedInLit, loggedInRef)
+// Modify at will
+provide(usernameLit, 'Menjaplom')
+provide(repoLit, 'Receptari')
+provide(branchLit, 'gh-pages')
+provide(commitMsgLit, 'Commit message')
 </script>
 
 <template>
