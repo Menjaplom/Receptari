@@ -2,7 +2,18 @@
 import HeaderBar from './components/HeaderBar.vue'
 import { ref, provide } from 'vue'
 import type { Ref } from 'vue'
-import { loggedInLit, usernameLit, repoLit, branchLit, commitMsgLit } from './literals'
+import {
+  loggedInLit,
+  usernameLit,
+  repoLit,
+  branchLit,
+  commitMsgLit,
+  dbLit,
+  dbNameLit,
+  dbURLLit
+} from './literals'
+import { type dbConnection } from '@/services/database/dbInterface'
+import { DBSqlite } from '@/services/database/sqlite/database'
 
 const loggedInRef: Ref<boolean> = ref(false)
 provide(loggedInLit, loggedInRef)
@@ -11,6 +22,10 @@ provide(usernameLit, 'Menjaplom')
 provide(repoLit, 'Receptari')
 provide(branchLit, 'gh-pages')
 provide(commitMsgLit, 'Commit message')
+
+const db: Ref<dbConnection> = ref(new DBSqlite())
+provide(dbLit, db)
+db.value.connect('' + dbURLLit + dbNameLit)
 </script>
 
 <template>

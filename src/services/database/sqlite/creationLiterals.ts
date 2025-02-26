@@ -17,6 +17,7 @@ export const createTableRecipeMedia =
     id INTEGER,
     url TEXT NOT NULL,
     position INTEGER NOT NULL,
+    description TEXT,
     FOREIGN KEY (recipeId) REFERENCES ` + table.recipes + `(id),
     PRIMARY KEY (recipeId, id)
   )`
@@ -24,7 +25,16 @@ export const createTableRecipeMedia =
 export const createTableCategories =
   `CREATE TABLE IF NOT EXISTS ` + table.categories + ` (
     category TEXT PRIMARY KEY
-  )`
+  );
+  INSERT INTO ` + table.categories + ` VALUES
+    ('APPETIZER'),
+    ('SOUP'),
+    ('SALAD'),
+    ('MAIN COURSE'),
+    ('SIDE DISH'),
+    ('DESSERT & BAKERY'),
+    ('DRINK');
+  `
 
 export const createTableRecipeCategory =
   `CREATE TABLE IF NOT EXISTS ` + table.recipeCategory + ` (
@@ -59,6 +69,7 @@ export const createTableRecipeTools =
   `CREATE TABLE IF NOT EXISTS ` + table.recipeTools + ` (
     recipeId INTEGER,
     tool TEXT,
+    description TEXT,
     FOREIGN KEY (recipeId) REFERENCES ` + table.recipes + `(id),
     FOREIGN KEY (tool) REFERENCES ` + table.tools + `(tool),
     PRIMARY KEY (recipeId, tool)
@@ -91,6 +102,7 @@ export const createTableRecipeDirections =
   `CREATE TABLE IF NOT EXISTS ` + table.recipeDirections + ` (
     recipeId INTEGER,
     directionId INTEGER,
+    position INTEGER NOT NULL,
     FOREIGN KEY (recipeId) REFERENCES ` + table.recipes + `(id),
     FOREIGN KEY (directionId) REFERENCES ` + table.directions + `(id),
     PRIMARY KEY (recipeId, directionId)
@@ -100,8 +112,9 @@ export const createTableDirectionMedia =
   `CREATE TABLE IF NOT EXISTS ` + table.directionMedia + ` (
     directionId INTEGER,
     id INTEGER,
-    url TEXT NOT NULL,
     position INTEGER NOT NULL,
+    url TEXT NOT NULL,
+    description TEXT,
     FOREIGN KEY (directionId) REFERENCES ` + table.directions + `(id),
     PRIMARY KEY (directionId, id)
   )`

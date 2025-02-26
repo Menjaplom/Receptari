@@ -2,22 +2,26 @@ import { type NewIngredientType } from './Ingredient'
 import { type NewDirectionType } from './NewDirection'
 import type { NewMediaDataType } from './NewMediaData'
 import { type RecipeType } from './Recipe'
+import type { TagType } from './Tag'
+import type { ToolType } from './Tool'
 
 class NewRecipe {
+  id: number
   title: string
   media: Array<NewMediaDataType>
   category: Array<string>
-  tags: Array<string>
+  tags: Array<TagType>
   recipeYield?: number
   prepTime?: string
   cookTime?: string
-  tools?: Array<string>
+  tools: Array<ToolType>
   difficulty?: number
   ingredients: Array<NewIngredientType>
   directions: Array<NewDirectionType>
   components: Array<NewRecipe>
 
   constructor(recipeInter: RecipeType) {
+    this.id = recipeInter.id
     this.title = recipeInter.title
     this.media = recipeInter.media.map((val, idx) => {
       return { file: undefined, url: val, order: idx }
@@ -48,6 +52,7 @@ class NewRecipe {
 
   outputRecipe(): RecipeType {
     return {
+      id: this.id,
       title: this.title,
       media: this.media.map((val) => {
         return val.url

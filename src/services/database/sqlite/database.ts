@@ -80,17 +80,156 @@ export class DBSqlite implements dbConnection {
     return Promise.resolve()
   }
 
+  // TODO: test error management
+  #insertRecipeBody(recipe: NewRecipe) {
+    const stmtRecBody = this.db!.prepare(insertLit.insertRecipe);
+    let result
+    try {
+      const recipeId = stmtRecBody.getAsObject({
+        ':name': recipe.title,
+        ':yield': recipe.recipeYield! || null,
+        ':prepTime': recipe.prepTime! || null,
+        ':cookTime': recipe.cookTime! || null,
+        ':difficulty': recipe.difficulty! || null
+      })
+      if (recipeId['id'] != null || recipeId['id'] != undefined) {
+        result = {"recipeId": -1, "error": 'Recipe body insertion failed.'}
+      }
+      result = {"recipeId": recipeId['id'] as number, "error": ""}
+    }
+    catch (e){
+      result = {"recipeId": -1, "error": 'Recipe body insertion failed. Cause: ' + e}
+    }
+    stmtRecBody.free()
+    return result
+  }
+
+  #insertDirection(recipe: NewRecipe, recipeId: number){
+    const stmtDirection = this.db!.prepare(insertLit.insertDirection);
+    const stmtRecipeDirections = this.db!.prepare(insertLit.insertRecipeDirection);
+    const stmtDirectionMedia = this.db!.prepare(insertLit.insertDirectionMedia);
+    recipe.directions.forEach((dir) => {
+      const directionId = stmtDirection.getAsObject({
+        ":description": dir.description
+      })
+      stmtRecipeDirections.run({
+        ":recipeId": recipeId,
+        ":directionId": directionId['id'],
+        ":position": dir.key
+      })
+      dir.media.forEach((media) => {
+        stmtDirectionMedia.run({
+          ":directionId": directionId['id'],
+          ":position": media.order,
+          ":url": media.url,
+          ":description": media.description! || null
+        })
+      })
+    });
+    stmtDirection.free();
+    stmtRecipeDirections.free();
+    stmtDirectionMedia.free();
+  }
+
+  // TODO: Break into smaller functions
+  // TODO: check the order of things gets infered from the indexes of the arrays where data is stored (see components section)
   async addRecipe(recipe: NewRecipe): Promise<void> {
     if (!this.ready) return Promise.reject('DB not ready')
     this.db!.run(sharedLit.beginTransaction)
-    const stmt = this.db!.prepare(insertLit.insertRecipe);
-    let stmtObject = {}
+    try {
+      // 1. Insert recipe body
+      let recipeBodyRes = this.#insertRecipeBody(recipe)
+      if (recipeBodyRes.error) {
+        throw new Error(recipeBodyRes.error)
+      }
+      const recipeId = recipeBodyRes.recipeId
+      // Insert recipe media
+      const stmtRecMed = this.db!.prepare(insertLit.insertRecipeMedia);
+      recipe.media.forEach((media)=> {
+        stmtRecMed.run({
+          ":recipeId": recipeId,
+          ":url": media.url,
+          ":position": media.order,
+          ":description": media.description! || null
+        })
+      })
+      stmtRecMed.free();
+      // Bond category onto recipe
+      const stmtRecipeCategory = this.db!.prepare(insertLit.insertRecipeCategory);
+      recipe.category.forEach((category)=> {
+        stmtRecMed.run({
+          ":recipeId": recipeId,
+          ":category": category
+        })
+      })
+      stmtRecipeCategory.free();
+      // Insert tag
+      const stmtTag = this.db!.prepare(insertLit.insertTag);
+      const stmtRecipeTag = this.db!.prepare(insertLit.insertRecipeTag);
+      recipe.tags.forEach((tag)=> {
+        stmtTag.run({
+          ":tag": tag.tag,
+          ":color": tag.color
+        })
+        stmtRecipeTag.run({
+          ":recipeId": recipeId,
+          ":tag": tag.tag
+        })
+      })
+      stmtTag.free();
+      stmtRecipeTag.free();
+      // Insert tools
+      const stmtTool = this.db!.prepare(insertLit.insertTool);
+      const stmtRecipeTool = this.db!.prepare(insertLit.insertRecipeTool);
+      recipe.tools.forEach((tool) => {
+        stmtTool.run({
+          ":tool": tool.name
+        })
+        stmtRecipeTool.run({
+          ":recipeId": recipeId,
+          ":tool": tool.name,
+          ":description": tool.description! || null
+        })
+      });
+      stmtTool.free();
+      stmtRecipeTool.free();
+      // Insert ingredients
+      const stmtIngredient = this.db!.prepare(insertLit.insertTool);
+      const stmtRecipeIngredient = this.db!.prepare(insertLit.insertRecipeTool);
+      recipe.ingredients.forEach((ingr) => {
+        stmtIngredient.run({
+          ":name": ingr.name
+        })
+        stmtRecipeIngredient.run({
+          ":recipeId": recipeId,
+          ":ingredient": ingr.name,
+          ":position": ingr.key,
+          ":units": ingr.units! || null,
+          ":measur": ingr.measure! || null
+        })
+      });
+      stmtIngredient.free();
+      stmtRecipeIngredient.free();
+      // Insert directions
+      this.#insertDirection(recipe, recipeId)
+      // Insert components
+      const stmtRecipeComponent = this.db!.prepare(insertLit.insertRecipeComponent);
+      recipe.components.forEach((comp, idx)=> {
+        stmtRecMed.run({
+          ":baseRecipe": recipeId,
+          ":component": comp.id,
+          ":position": idx
+        })
+      })
+      stmtRecMed.free();
+    }
+    catch {
+      console.log()
+      this.db!.run(sharedLit.rollbackTransaction)
+    }
     
-    /*const result = stmt.getAsObject({':name': recipe.title,
-      ':yield': recipe.recipeYield,
-      ':prepTime': recipe.prepTime,
-      ':cookTime': recipe.cookTime,
-      ':difficulty': recipe.difficulty})*/
+    
+    
     //return Promise.reject('DB not ready')
   }
  

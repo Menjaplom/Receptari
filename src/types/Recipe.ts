@@ -1,16 +1,19 @@
 import { type IngredientType, ingredientSchema } from './Ingredient'
 import { directionSchema } from './Direction'
 import { z } from 'zod'
+import { tagSchema } from './Tag'
+import { toolSchema } from './Tool'
 
 export const recipeBaseSchema = z.object({
+  id: z.number(),
   title: z.string(),
   media: z.string().array(),
   category: z.string().array(),
-  tags: z.string().array(),
+  tags: z.array(tagSchema),
   recipeYield: z.number().optional(),
   prepTime: z.string().optional(),
   cookTime: z.string().optional(),
-  tools: z.string().array().optional(),
+  tools:z.array(toolSchema),
   difficulty: z.number().optional(),
   ingredients: z.array(ingredientSchema),
   directions: z.array(directionSchema)
