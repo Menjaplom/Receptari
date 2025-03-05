@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
-import type { Ref } from 'vue'
-import { type NewDirectionType } from '../../types/NewDirection'
+import { emptyDirection, NewDirection, type Direction } from '../../types/Direction'
 import AddMedia from '../media/AddMedia.vue'
 
 const props = defineProps({
@@ -10,11 +9,11 @@ const props = defineProps({
   n_id: Number
 })
 const id = props.parent_id + 'newDirectionList' + props.n_id
-let order_counter = 0
+const list = defineModel<Array<NewDirection>>('direction_list', { required: true  })
+let counter = list.value.length
 
+// Draggable logic
 const drag = ref(false)
-
-const list = defineModel<Array<NewDirectionType>>('direction_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -26,34 +25,21 @@ const dragOptions = computed(() => {
 
 function addDirection() {
   if (list.value.length === 0 || list.value[list.value.length - 1].description !== '') {
-    list.value.push({ key: ++order_counter, description: '', media: [] })
+    let auxDir = emptyDirection
+
+    list.value.push(new NewDirection(auxDir, counter++))
   }
 }
 
-function removeDirection(key: number) {
+function removeDirection(dragId: number) {
   for (let i = 0; i < list.value.length; i++) {
-    if (list.value[i].key === key) {
+    if (list.value[i].dragId === dragId) {
       list.value.splice(i, 1)
       break
     }
   }
 }
 
-// Add URL to carrousel
-function onFileChange(e: Event, d: NewDirectionType) {
-  const input = e.target as HTMLInputElement
-  if (!input.files?.length) {
-    return
-  }
-
-  for (const file of input.files) {
-    d.media.push({
-      file: file,
-      url: URL.createObjectURL(file),
-      order: ++order_counter
-    })
-  }
-}
 </script>
 
 <template>
@@ -77,18 +63,9 @@ function onFileChange(e: Event, d: NewDirectionType) {
       <li class="list-group-item">
         <span class="handle"></span>
         <input type="text" v-model="element.description" />
-        <label :for="'image_uploads_' + element.key" class="addImage"></label>
-        <input
-          type="file"
-          :id="'image_uploads_' + element.key"
-          :name="'image_uploads_' + element.key"
-          accept=".jpg, .jpeg, .png"
-          multiple
-          v-on:change="onFileChange($event, element)"
-          hidden
-        />
+        
         <button @click="removeDirection(element.key)">X</button>
-        <AddMedia v-model:media_list="element.media" :parent_id="id" :n_id="element.key" />
+        <AddMedia v-model:new_media_list="element.media" :parent_id="id" :n_id="element.key" :add_but_msg="'Add image'"/>
         {{ element }}
       </li>
     </template>

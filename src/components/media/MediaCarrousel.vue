@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import type { Media } from '@/types/Media'
+import { computed } from 'vue'
+
+//TODO: ADD IMAGE FOOTER SUPPORT
 
 const props = defineProps({
   id_start: String,
-  media_list: Array<string>
+  media_list: Array<Media>
 })
-const emit = defineEmits(['selected'])
 
-const selected = ref(0)
-emit('selected', selected.value)
+
+const selected = defineModel<number>('selected', { required: true  })
+
 const id_start = props.id_start + '-'
 const length = computed(() => {
   return props.media_list?.length || 0
@@ -16,7 +19,6 @@ const length = computed(() => {
 
 function update_selected(new_sel: number) {
   selected.value = (new_sel + length.value) % length.value
-  emit('selected', selected.value)
 }
 
 const video_supp = ['mp4', 'ogg', 'webm']
@@ -45,13 +47,13 @@ const video_supp = ['mp4', 'ogg', 'webm']
     <div class="slider">
       <li v-for="(item, index) in props.media_list" :key="index">
         <div
-          v-if="!video_supp.includes(item?.split('.').pop() || '')"
+          v-if="!video_supp.includes(item.url?.split('.').pop() || '')"
           :id="id_start + index"
           class="slide"
-          :style="'background-image: url(' + item + ');'"
+          :style="'background-image: url(' + item.url + ');'"
         ></div>
         <div v-else :id="id_start + index" class="slide">
-          <video :src="item" controls></video>
+          <video :src="item.url" controls></video>
         </div>
       </li>
     </div>

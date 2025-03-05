@@ -14,6 +14,7 @@ import {
 } from './literals'
 import { type dbConnection } from '@/services/database/dbInterface'
 import { DBSqlite } from '@/services/database/sqlite/database'
+import { MockDB } from './services/database/debug/mockDB'
 
 const loggedInRef: Ref<boolean> = ref(false)
 provide(loggedInLit, loggedInRef)
@@ -23,7 +24,8 @@ provide(repoLit, 'Receptari')
 provide(branchLit, 'gh-pages')
 provide(commitMsgLit, 'Commit message')
 
-const db: Ref<dbConnection> = ref(new DBSqlite())
+//const db: Ref<dbConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
+const db: Ref<dbConnection> = ref(new MockDB())
 provide(dbLit, db)
 db.value.connect('' + dbURLLit + dbNameLit)
 </script>
@@ -37,7 +39,19 @@ db.value.connect('' + dbURLLit + dbNameLit)
   <HeaderBar />
 
   <main>
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <template v-if="Component">
+        <Suspense>
+          <!-- main content -->
+          <component :is="Component"></component>
+
+          <!-- loading state -->
+          <template #fallback>
+            Loading...
+          </template>
+        </Suspense>
+      </template>
+    </RouterView>
   </main>
 </template>
 

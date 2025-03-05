@@ -8,7 +8,7 @@ const routes = [
     path: '/new',
     component: NewRecipe,
     props: {
-      recipe: {
+      recipe: null/*{
         title: '',
         media: [],
         category: [''], // Currently hardcoding a single value to keep it simple
@@ -21,7 +21,7 @@ const routes = [
         ingredients: [],
         directions: [],
         components: []
-      }
+      }*/
     }
   }
 ]

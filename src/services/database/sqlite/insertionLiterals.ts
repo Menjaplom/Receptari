@@ -3,6 +3,7 @@ import  * as table from "./sharedLiterals"
 export const insertRecipe =
   `INSERT INTO ` + table.recipes + ` VALUES (
     :name,
+    :description,
     :yield,
     :prepTime,
     :cookTime,
@@ -14,7 +15,7 @@ export const insertRecipeMedia =
     :recipeId,
     :url,
     :position,
-    :description
+    :footer
   )`
 
 export const insertRecipeCategory =
@@ -77,8 +78,8 @@ export const insertDirectionMedia =
   `INSERT INTO ` + table.directionMedia + ` VALUES (
     :directionId,
     :position,
-    :url TEXT,
-    :description
+    :url,
+    :footer
   )`
 
 export const insertRecipeComponent =

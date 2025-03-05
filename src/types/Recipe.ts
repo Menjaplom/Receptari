@@ -1,15 +1,17 @@
-import { type IngredientType, ingredientSchema } from './Ingredient'
-import { directionSchema } from './Direction'
+import { NewIngredient, ingredientSchema } from './Ingredient'
+import { directionSchema, NewDirection } from './Direction'
 import { z } from 'zod'
-import { tagSchema } from './Tag'
-import { toolSchema } from './Tool'
+import { tagSchema, type TagType } from './Tag'
+import { toolSchema, type Tool } from './Tool'
+import { mediaSchema, NewMedia } from './Media'
 
 export const recipeBaseSchema = z.object({
   id: z.number(),
   title: z.string(),
-  media: z.string().array(),
+  media: z.array(mediaSchema),
   category: z.string().array(),
   tags: z.array(tagSchema),
+  description: z.string().optional(),
   recipeYield: z.number().optional(),
   prepTime: z.string().optional(),
   cookTime: z.string().optional(),
@@ -19,75 +21,69 @@ export const recipeBaseSchema = z.object({
   directions: z.array(directionSchema)
 })
 
-export type RecipeType = z.infer<typeof recipeBaseSchema> & {
-  components: RecipeType[]
+export type Recipe = z.infer<typeof recipeBaseSchema> & {
+  components: Recipe[]
 }
 
-export const recipeSchema: z.ZodType<RecipeType> = recipeBaseSchema.extend({
+export const recipeSchema: z.ZodType<Recipe> = recipeBaseSchema.extend({
   components: z.lazy(() => recipeSchema.array())
 })
-/*
-export function isRecipeInter(value: unknown): value is RecipeInter {
-  if (!value || typeof value !== 'object') {
-    return false
-  }
-  const object = value as Record<string, unknown>
 
-  return (
-    typeof object.title === 'string' &&
-    Array.isArray(object.media) &&
-    object.media.every((m) => typeof m === 'string') &&
-    Array.isArray(object.category) &&
-    object.category.every((c) => typeof c === 'string') &&
-    Array.isArray(object.tags) &&
-    object.tags.every((t) => typeof t === 'string') &&
-    typeof object.recipeYield === 'number' &&
-    typeof object.prepTime === 'string' &&
-    typeof object.cookTime === 'string' &&
-    Array.isArray(object.tools) &&
-    object.tools.every((tool) => typeof tool === 'string') &&
-    typeof object.difficulty === 'number' &&
-    Array.isArray(object.ingredients) &&
-    object.ingredients.every(isIngredientInter) &&
-    Array.isArray(object.direction) &&
-    object.direction.every(isDirectionInter) &&
-    Array.isArray(object.components) &&
-    object.components.every(isRecipeInter)
-  )
+export const emptyRecipe: Recipe =  {
+  id: -1,
+  title: "",
+  media: [],
+  category: [],
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
 }
 
-export function isRecipeInterArray(value: unknown): value is Array<RecipeInter> {
-  return Array.isArray(value) && value.every(isRecipeInter)
+/*export type RecipeRawMedia = {
+  base: RawMedia[],
+  directions: Array<RawMedia[]>,
+  components: RecipeRawMedia | null
+}
+
+export const emptyRecRawMed: RecipeRawMedia = {
+  base: [],
+  directions: [[]],
+  components: null
 }*/
 
-class Recipe {
-  /*title: String
-  media: Array<String>
-  category: Array<String>
-  tags: Array<String>
-  recipeYield: Number
-  prepTime: String
-  cookTime: String
-  tools: Array<String>
-  difficulty: Number
-  ingredients: Array<Ingredient>
-  direction: Array<Direction>
-  components: Array<Recipe>
+// TODO: Add recursive component/newrecipe
+export class NewRecipe {
+  id: number
+  title: string
+  media: NewMedia[]
+  category: string[]
+  tags: TagType[]
+  description?: string
+  recipeYield?: number
+  prepTime?: string
+  cookTime?: string
+  tools: Tool[]
+  difficulty?: number
+  ingredients: NewIngredient[]
+  directions: NewDirection[]
+  components: NewRecipe[]
 
-  constructor(recipeInter: RecipeInter) {
-    this.title = recipeInter['title']
-    this.media = recipeInter['media']
-    this.category = recipeInter['category']
-    this.tags = recipeInter['tags']
-    this.recipeYield = recipeInter['recipeYield']
-    this.prepTime = recipeInter['prepTime']
-    this.cookTime = recipeInter['cookTime']
-    this.tools = recipeInter['tools']
-    this.difficulty = recipeInter['difficulty']
-    this.ingredients = recipeInter['ingredients']
-    this.direction = recipeInter['direction']
-    this.components = recipeInter['components']
-  }*/
+  constructor(recipe: Recipe){
+    this.id = recipe.id
+    this.title = recipe.title
+    this.media = recipe.media.map((m, idx) => new NewMedia(m, idx))
+    this.category = recipe.category
+    this.tags = recipe.tags
+    this.description = recipe.description
+    this.recipeYield = recipe.recipeYield
+    this.prepTime = recipe.prepTime
+    this.cookTime = recipe.cookTime
+    this.tools = recipe.tools
+    this.difficulty = recipe.difficulty
+    this.ingredients = recipe.ingredients.map((ingr, idx) => new NewIngredient(ingr, idx))
+    this.directions = recipe.directions.map((dir, idx) => new NewDirection(dir, idx))
+    this.components = recipe.components.map((c) => new NewRecipe(c)) //TODO: CHECK REICPE ID DEFINES DRAGID FOR EACH CHILD
+  }
 }
-
-export default Recipe

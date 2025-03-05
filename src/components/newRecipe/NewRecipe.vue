@@ -1,31 +1,29 @@
 <script setup lang="ts">
 import NewIngredientList from './NewIngredientList.vue'
-import NewDirection from './NewDirection.vue'
-import NewRecipe from '../../types/NewRecipe'
+import UpdateDirection from './UpdateDirection.vue'
 import SavePopup from './SavePopup.vue'
 import type { Ref } from 'vue'
-import { ref, computed, onMounted, inject } from 'vue'
-import { recipeSchema, type RecipeType } from '@/types/Recipe'
-import { Octokit } from 'octokit'
-import { branchLit, repoLit, usernameLit } from '@/literals'
+import { ref, computed } from 'vue'
+import { emptyRecipe, NewRecipe, type Recipe } from '@/types/Recipe'
+//import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
-let parent_id = 'newRecipe'
+const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
 
 const props = defineProps<{
-  recipe: RecipeType
+  recipe: Recipe | null
 }>()
 
-let test_recipe: RecipeType = props.recipe
-let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe))
-fetch('/static/recipes/braç_de_gitano_de_crema/Braç_de_gitano_de_crema.json')
+//let test_recipe: Recipe = props.recipe
+let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe?? emptyRecipe))
+/*fetch('/static/recipes/braç_de_gitano_de_crema/Braç_de_gitano_de_crema.json')
   .then((response) => response.json())
   .then((data) => {
     console.log(data)
     test_recipe = recipeSchema.parse(data)
     console.log(test_recipe)
-    newRecipe.value = new NewRecipe(test_recipe)
+    recipe.value = new recipe(test_recipe)
   })
-  .catch((error) => console.error('Error loading JSON file', error))
+  .catch((error) => console.error('Error loading JSON file', error))*/
 
 let savePopped: Ref<boolean> = ref(false)
 
@@ -41,17 +39,19 @@ const debugDirections = computed(() => {
   console.log(JSON.stringify(newRecipe.value.directions))
   return newRecipe.value.directions
 })
-
+/*
 async function saveRecipe() {
   const octokit = new Octokit({ auth: localStorage.getItem('tokenReceptari') })
   const user: string = inject(usernameLit) as string
   const repo: string = inject(repoLit) as string
   const branch: string = inject(branchLit) as string
 
-  let saveRecipe = JSON.stringify(newRecipe.value.outputRecipe())
+  let saveRecipe = JSON.stringify(recipe.value.outputRecipe())
 
   console.log(saveRecipe)
-}
+}*/
+
+
 </script>
 
 <template>
@@ -161,12 +161,12 @@ async function saveRecipe() {
 
     <div>
       <h3>Directions</h3>
-      <NewDirection :parent_id="parent_id" :n_id="2" :direction_list="newRecipe.directions" />
+      <UpdateDirection :parent_id="parent_id" :n_id="2" v-model:direction_list="newRecipe.directions"/>
     </div>
   </div>
 
-  <button @click="savePopped = true">Save recipe</button>
-  <SavePopup v-model:visible="savePopped" @run-process="saveRecipe()" />
+  <button @click="(savePopped = true)">Save recipe</button>
+  <SavePopup v-model:visible="savePopped" @run-process="" /><!-- @run-process="saveRecipe" -->
 
   <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>
 </template>

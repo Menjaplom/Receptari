@@ -5,6 +5,7 @@ export const createTableRecipes =
   `CREATE TABLE IF NOT EXISTS ` + table.recipes + ` (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
+    description TEXT, 
     yield INTEGER,
     prepTime INTEGER,
     cookTime INTEGER,
@@ -17,7 +18,7 @@ export const createTableRecipeMedia =
     id INTEGER,
     url TEXT NOT NULL,
     position INTEGER NOT NULL,
-    description TEXT,
+    footer TEXT,
     FOREIGN KEY (recipeId) REFERENCES ` + table.recipes + `(id),
     PRIMARY KEY (recipeId, id)
   )`
@@ -114,7 +115,7 @@ export const createTableDirectionMedia =
     id INTEGER,
     position INTEGER NOT NULL,
     url TEXT NOT NULL,
-    description TEXT,
+    footer TEXT,
     FOREIGN KEY (directionId) REFERENCES ` + table.directions + `(id),
     PRIMARY KEY (directionId, id)
   )`

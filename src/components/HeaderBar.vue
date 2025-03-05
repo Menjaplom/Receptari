@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Octokit, App, RequestError } from 'octokit'
+//import { Octokit /*, RequestError*/ } from 'https://esm.sh/@octokit/core@4.2.2'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import PopUp from '@/components/misc/PopUp.vue'
@@ -10,7 +10,7 @@ let popupVisible = ref(false)
 let token = ref((localStorage.getItem('tokenReceptari') || '')!)
 console.log('token = ' + token.value)
 const loggedIn: Ref<boolean> = inject(loggedInLit) as Ref<boolean>
-checkToken()
+;`checkToken()
 
 // Function to check if a token is valid
 async function checkToken() {
@@ -21,20 +21,20 @@ async function checkToken() {
     loggedIn.value = true
     localStorage.setItem('tokenReceptari', token.value)
   } catch (error) {
-    if (error instanceof RequestError) {
+    /*if (error instanceof RequestError) {
       if (error.status === 401) {
         console.log('Invalid token.')
       }
     } else {
       console.log('Invalid token.')
-    }
+    }*/
     loggedIn.value = false
   }
 }
 
 function logOut() {
   localStorage.removeItem('tokenReceptari')
-}
+}`
 </script>
 
 <template>
@@ -46,7 +46,7 @@ function logOut() {
       </ul>
     </nav>
     <h1><RouterLink to="/">Receptari</RouterLink></h1>
-    <span @click="popupVisible = !popupVisible">
+    <span @click="(popupVisible = !popupVisible)">
       <img v-if="!loggedIn" class="not_login" src="./icons/not_login.png" />
       <img v-else class="not_login" src="./icons/ok.svg" />
     </span>

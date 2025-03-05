@@ -5,4 +5,4 @@ export const toolSchema = z.object({
   description:  z.string().optional()
 })
 
-export type ToolType = z.infer<typeof toolSchema>
+export type Tool = z.infer<typeof toolSchema>

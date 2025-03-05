@@ -2,9 +2,11 @@ import { dbURLLit } from '@/literals'
 import * as createLit from '@/services/database/sqlite/creationLiterals'
 import { type dbConnection } from '../dbInterface'
 import initSqlJs, { type Database } from 'sql.js'
-import type NewRecipe from '@/types/NewRecipe'
+import type Recipe from '@/types/NewRecipe'
 import * as sharedLit from './sharedLiterals'
 import * as insertLit from './insertionLiterals'
+import type { Recipe } from '@/types/Recipe'
+import type { recipeThumbnailType } from '@/types/RecipeThumbnail'
 
 export class DBSqlite implements dbConnection {
   ready: boolean
@@ -12,6 +14,12 @@ export class DBSqlite implements dbConnection {
 
   constructor() {
     this.ready = false
+  }
+  listAllRecipes(): Promise<Array<recipeThumbnailType>> {
+    throw new Error('Method not implemented.')
+  }
+  insertRecipe(recipe: Recipe): Promise<recipeThumbnailType> {
+    throw new Error('Method not implemented.')
   }
 
   async connect(dbName: string): Promise<void> {
@@ -81,12 +89,13 @@ export class DBSqlite implements dbConnection {
   }
 
   // TODO: test error management
-  #insertRecipeBody(recipe: NewRecipe) {
+  #insertRecipeBody(recipe: Recipe) {
     const stmtRecBody = this.db!.prepare(insertLit.insertRecipe);
     let result
     try {
       const recipeId = stmtRecBody.getAsObject({
         ':name': recipe.title,
+        ':description': recipe.description || null,
         ':yield': recipe.recipeYield! || null,
         ':prepTime': recipe.prepTime! || null,
         ':cookTime': recipe.cookTime! || null,
