@@ -1,9 +1,9 @@
-import { NewIngredient, ingredientSchema } from './Ingredient'
-import { directionSchema, NewDirection } from './Direction'
 import { z } from 'zod'
-import { tagSchema, type TagType } from './Tag'
 import { toolSchema, type Tool } from './Tool'
+import { tagSchema, type TagType } from './Tag'
 import { mediaSchema, NewMedia } from './Media'
+import { ingredientSchema, NewIngredient } from './Ingredient'
+import { directionSchema, NewDirection } from './Direction'
 
 export const recipeBaseSchema = z.object({
   id: z.number(),
@@ -85,5 +85,24 @@ export class NewRecipe {
     this.ingredients = recipe.ingredients.map((ingr, idx) => new NewIngredient(ingr, idx))
     this.directions = recipe.directions.map((dir, idx) => new NewDirection(dir, idx))
     this.components = recipe.components.map((c) => new NewRecipe(c)) //TODO: CHECK REICPE ID DEFINES DRAGID FOR EACH CHILD
+  }
+
+  exportRecipe(): Recipe {
+    console.log('the damn ingredients' + JSON.stringify(this.ingredients))
+    return {
+      id: this.id,
+      title: this.title,
+      media: this.media.map((m) => m.exportMedia()),
+      category: this.category,
+      tags: this.tags,
+      description: this.description,
+      recipeYield: this.recipeYield,
+      prepTime: this.prepTime,
+      cookTime: this.cookTime,
+      tools: this.tools,
+      ingredients: this.ingredients.map((ingr) => ingr.exportIngredient()),
+      directions: this.directions.map((d) => d.exportDirection()),
+      components: this.components.map((c) => c.exportRecipe())
+    }
   }
 }

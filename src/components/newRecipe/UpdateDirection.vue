@@ -55,7 +55,7 @@ function removeDirection(dragId: number) {
     v-bind="dragOptions"
     @start="drag = true"
     @end="drag = false"
-    item-key="key"
+    item-key="dragId"
     handle=".handle"
     :group="id"
   >
@@ -64,8 +64,8 @@ function removeDirection(dragId: number) {
         <span class="handle"></span>
         <input type="text" v-model="element.description" />
         
-        <button @click="removeDirection(element.key)">X</button>
-        <AddMedia v-model:new_media_list="element.media" :parent_id="id" :n_id="element.key" :add_but_msg="'Add image'"/>
+        <button @click="removeDirection(element.dragId)">X</button>
+        <AddMedia v-model:new_media_list="element.media" :parent_id="id" :n_id="element.dragId" :add_but_msg="'Add image'"/>
         {{ element }}
       </li>
     </template>

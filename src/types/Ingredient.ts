@@ -23,7 +23,7 @@ export class NewIngredient {
     this.measure = ingredient.measure
   }
 
-  exportMedia(): Ingredient {
+  exportIngredient(): Ingredient {
     return {
       'name': this.name,
       'units': this.units,

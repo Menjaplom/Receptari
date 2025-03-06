@@ -39,17 +39,17 @@ const debugDirections = computed(() => {
   console.log(JSON.stringify(newRecipe.value.directions))
   return newRecipe.value.directions
 })
-/*
+
 async function saveRecipe() {
-  const octokit = new Octokit({ auth: localStorage.getItem('tokenReceptari') })
+  /*const octokit = new Octokit({ auth: localStorage.getItem('tokenReceptari') })
   const user: string = inject(usernameLit) as string
   const repo: string = inject(repoLit) as string
   const branch: string = inject(branchLit) as string
 
-  let saveRecipe = JSON.stringify(recipe.value.outputRecipe())
-
-  console.log(saveRecipe)
-}*/
+  let saveRecipe = JSON.stringify(recipe.value.outputRecipe())*/
+  let recipe: Recipe = newRecipe.value.exportRecipe()
+  console.log(JSON.stringify(recipe))
+}
 
 
 </script>
@@ -166,7 +166,7 @@ async function saveRecipe() {
   </div>
 
   <button @click="(savePopped = true)">Save recipe</button>
-  <SavePopup v-model:visible="savePopped" @run-process="" /><!-- @run-process="saveRecipe" -->
+  <SavePopup v-model:visible="savePopped" @run-process="saveRecipe" />
 
   <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>
 </template>

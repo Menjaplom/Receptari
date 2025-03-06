@@ -2,17 +2,19 @@
 import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import { type NewIngredientType } from '../../types/Ingredient'
+import { NewIngredient } from '../../types/Ingredient'
 
 const props = defineProps({
   parent_id: String,
   n_id: Number
 })
 const id = props.parent_id + 'newIngredientList' + props.n_id
-let order_counter = -1 // must be -1 to begin with
 
+const list = defineModel<Array<NewIngredient>>('ingredient_list', { required: true })
+let counter = list.value.length
+
+// Drag logic
 const drag = ref(false)
-const list = defineModel<Array<NewIngredientType>>('ingredient_list', { default: [] })
 const dragOptions = computed(() => {
   return {
     animation: 200,
@@ -25,13 +27,13 @@ const dragOptions = computed(() => {
 function addIngredient() {
   if (list.value.length === 0 || list.value[list.value.length - 1].name !== '') {
     // TODO: Update to no position can be ''
-    list.value.push({ key: ++order_counter, name: '' })
+    list.value.push(new NewIngredient({name: '' }, counter++))
   }
 }
 
-function removeIngredient(key: number) {
+function removeIngredient(dragId: number) {
   list.value = list.value.filter((ingredient) => {
-    return ingredient.key !== key
+    return ingredient.dragId !== dragId
   })
 }
 </script>
@@ -50,7 +52,7 @@ function removeIngredient(key: number) {
     v-bind="dragOptions"
     @start="drag = true"
     @end="drag = false"
-    item-key="key"
+    item-key="dragId"
     :group="id"
   >
     <template #item="{ element }">
