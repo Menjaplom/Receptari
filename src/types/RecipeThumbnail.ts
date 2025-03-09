@@ -6,4 +6,4 @@ export const recipeThumbnailSchema = z.object({
   media:  z.string()
 })
 
-export type recipeThumbnailType = z.infer<typeof recipeThumbnailSchema>
+export type RecipeThumbnail = z.infer<typeof recipeThumbnailSchema>

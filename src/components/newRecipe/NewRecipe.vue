@@ -3,8 +3,10 @@ import NewIngredientList from './NewIngredientList.vue'
 import UpdateDirection from './UpdateDirection.vue'
 import SavePopup from './SavePopup.vue'
 import type { Ref } from 'vue'
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { emptyRecipe, NewRecipe, type Recipe } from '@/types/Recipe'
+import type { DBConnection } from '@/services/database/dbInterface'
+import { dbLit } from '@/literals'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -12,6 +14,7 @@ const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
 const props = defineProps<{
   recipe: Recipe | null
 }>()
+const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
 
 //let test_recipe: Recipe = props.recipe
 let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe?? emptyRecipe))
@@ -49,6 +52,8 @@ async function saveRecipe() {
   let saveRecipe = JSON.stringify(recipe.value.outputRecipe())*/
   let recipe: Recipe = newRecipe.value.exportRecipe()
   console.log(JSON.stringify(recipe))
+  db.value.addRecipe(recipe)
+
 }
 
 

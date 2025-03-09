@@ -1,6 +1,6 @@
 import { dbURLLit } from '@/literals'
 import * as createLit from '@/services/database/sqlite/creationLiterals'
-import { type dbConnection } from '../dbInterface'
+import { type DBConnection } from '../dbInterface'
 import initSqlJs, { type Database } from 'sql.js'
 import type Recipe from '@/types/NewRecipe'
 import * as sharedLit from './sharedLiterals'
@@ -8,7 +8,7 @@ import * as insertLit from './insertionLiterals'
 import type { Recipe } from '@/types/Recipe'
 import type { recipeThumbnailType } from '@/types/RecipeThumbnail'
 
-export class DBSqlite implements dbConnection {
+export class DBSqlite implements DBConnection {
   ready: boolean
   db?: Database
 

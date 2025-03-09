@@ -70,7 +70,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
   </div>
 </template>
 
-<style>
+<style scoped>
 *,
 *::before,
 *::after {

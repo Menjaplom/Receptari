@@ -1,20 +1,47 @@
 <script setup lang="ts">
 import { dbLit } from '@/literals';
-import type { dbConnection } from '@/services/database/dbInterface';
+import type { DBConnection } from '@/services/database/dbInterface';
+import { type RecipeThumbnail } from '@/types/RecipeThumbnail';
 import { inject, type Ref } from 'vue'
 
-const db = inject(dbLit) as Ref<dbConnection>
-let thumbnails = await db.value.listAllRecipes()
+const db = inject(dbLit) as Ref<DBConnection>
+let thumbnails: Array<RecipeThumbnail> = await db.value.listAllRecipes()
 </script>
 
 <template>
   <h1>Recive list: main view</h1>
   <h2 v-if="thumbnails.length < 1">No recipes. Please insert one</h2>
-  <ul v-else>
-    <li v-for="thumbnail in thumbnails" :key="thumbnail.id">
+  <section class="cards" v-else>
+    <article class="card" v-for="thumbnail in thumbnails" :key="thumbnail.id">
       <p>{{thumbnail.id}}</p>
-      <p>{{ thumbnail.name }}</p>
-      <img bind:src="thumbnail.url">
-    </li>
-  </ul>
+      <picture>
+        <source :src="thumbnail.media" />
+        <img src="../../static/debug/recipeThumbnail.png" alt="Recipe not found" />
+      </picture>
+      <p>{{ thumbnail.title }}</p>
+    </article>
+  </section>
 </template>
+
+<style scoped>
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+  justify-content: center;
+ }
+
+
+.card {
+  /*margin: 1rem;*/
+  background-color: rgb(0, 187, 255);
+  padding: 1rem;
+    /*flex: 1 0 500px;
+    margin: 1rem .25em;*/
+}
+
+p {
+  color: black;
+  text-align: center;
+}
+
+</style>

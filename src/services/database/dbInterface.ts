@@ -1,15 +1,14 @@
-import NewRecipe from '@/types/NewRecipe'
-import type { recipeThumbnailType } from '@/types/RecipeThumbnail'
-import type { insertRecipe } from './sqlite/insertionLiterals'
+import { type Recipe } from '@/types/Recipe'
+import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 
-export interface dbConnection {
+export interface DBConnection {
   ready: boolean
 
   connect(dbName: string): Promise<void>
 
-  addRecipe(recipe: NewRecipe): Promise<void> // TODO: Add proper return value
+  addRecipe(recipe: Recipe): Promise<RecipeThumbnail> // TODO: Add proper return value
 
-  listAllRecipes(): Promise<Array<recipeThumbnailType>>
+  listAllRecipes(): Promise<Array<RecipeThumbnail>>
 
-  insertRecipe(recipe: NewRecipe): Promise<recipeThumbnailType>
+  //insertRecipe(recipe: NewRecipe): Promise<recipeThumbnailType>
 }

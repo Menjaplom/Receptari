@@ -12,11 +12,11 @@ import {
   dbNameLit,
   dbURLLit
 } from './literals'
-import { type dbConnection } from '@/services/database/dbInterface'
+import { type DBConnection } from '@/services/database/dbInterface'
 import { DBSqlite } from '@/services/database/sqlite/database'
 import { MockDB } from './services/database/debug/mockDB'
 
-const loggedInRef: Ref<boolean> = ref(false)
+const loggedInRef: Ref<boolean> = ref(true) // TODO: SET TO FALSE BY DEFAULT
 provide(loggedInLit, loggedInRef)
 // Modify at will
 provide(usernameLit, 'Menjaplom')
@@ -24,17 +24,17 @@ provide(repoLit, 'Receptari')
 provide(branchLit, 'gh-pages')
 provide(commitMsgLit, 'Commit message')
 
-//const db: Ref<dbConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
-const db: Ref<dbConnection> = ref(new MockDB())
+//const db: Ref<DBConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
+const db: Ref<DBConnection> = ref(new MockDB())
 provide(dbLit, db)
 db.value.connect('' + dbURLLit + dbNameLit)
 </script>
 
 <template>
-  <nav>
+  <!--<nav>
     <RouterLink to="/">Go to Home</RouterLink>
     <RouterLink to="/new">Go to new recipe</RouterLink>
-  </nav>
+  </nav>-->
 
   <HeaderBar />
 
