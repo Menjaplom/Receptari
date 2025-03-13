@@ -12,7 +12,7 @@ export const createTableRecipeComponents =
     FOREIGN KEY (baseRecipe) REFERENCES ` + tableRecipes + `(id),
     FOREIGN KEY (component) REFERENCES ` + tableRecipes + `(id),
     PRIMARY KEY (baseRecipe, component)
-  )`
+  ) STRICT`
 
 // Table insertion literals
 export const insertRecipeComponent =

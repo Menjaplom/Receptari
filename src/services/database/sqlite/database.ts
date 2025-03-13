@@ -5,11 +5,10 @@ import * as sharedLit from './sharedLiterals'
 import type { Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import { isImage } from '@/types/Media'
-import { createTableRecipes, insertRecipe } from './tables/recipes'
-import { createTableRecipeMedia, insertRecipeMedia } from './tables/recipeMedia'
-import { createTableCategories, createTableRecipeCategory, insertRecipeCategory } from './tables/categories'
-import { createTableRecipeTags, createTableTags, insertRecipeTag, insertTag } from './tables/tags'
-import { createTableRecipeTools, createTableTools, insertRecipeTool, insertTool } from './tables/tools'
+import { createTableRecipes, createTableRecipeMedia, insertRecipeMedia, insertRecipeBody } from './tables/recipes'
+import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
+import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
+import { createTableRecipeTools, createTableTools, insertTools } from './tables/tools'
 import { createTableIngredients, createTableRecipeIngredients } from './tables/ingredients'
 import { createTableDirectionMedia, createTableDirections, createTableRecipeDirections, insertDirection, insertDirectionMedia, insertRecipeDirection } from './tables/directions'
 import { createTableRecipeComponents, insertRecipeComponent } from './tables/components'
@@ -88,30 +87,7 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve()
   }
 
-  // TODO: test error management
-  #insertRecipeBody(recipe: Recipe) {
-    const stmtRecBody = this.db!.prepare(insertRecipe);
-    let result
-    try {
-      const recipeId = stmtRecBody.getAsObject({
-        ':name': recipe.title,
-        ':description': recipe.description || null,
-        ':yield': recipe.recipeYield! || null,
-        ':prepTime': recipe.prepTime! || null,
-        ':cookTime': recipe.cookTime! || null,
-        ':difficulty': recipe.difficulty! || null
-      })
-      if (recipeId['id'] != null || recipeId['id'] != undefined) {
-        result = {"recipeId": -1, "error": 'Recipe body insertion failed.'}
-      }
-      result = {"recipeId": recipeId['id'] as number, "error": ""}
-    }
-    catch (e){
-      result = {"recipeId": -1, "error": 'Recipe body insertion failed. Cause: ' + e}
-    }
-    stmtRecBody.free()
-    return result
-  }
+  
 
   #insertDirection(recipe: Recipe, recipeId: number){
     const stmtDirection = this.db!.prepare(insertDirection);
@@ -146,69 +122,35 @@ export class DBSqlite implements DBConnection {
     if (!this.ready) return Promise.reject('DB not ready')
     this.db!.run(sharedLit.beginTransaction)
     try {
-      // 1. Insert recipe body
-      let recipeBodyRes = this.#insertRecipeBody(recipe)
+      // Insert recipe body
+      let recipeBodyRes = insertRecipeBody(this.db!, recipe)
       if (recipeBodyRes.error) {
         throw new Error(recipeBodyRes.error)
       }
       const recipeId = recipeBodyRes.recipeId
-      // Insert recipe media
-      let thumbnailMedia = '';
-      const stmtRecMed = this.db!.prepare(insertRecipeMedia);
-      recipe.media.forEach((media, idx)=> {
-        if (!thumbnailMedia && isImage(media.url)) {
-          thumbnailMedia = media.url
-        }
-        stmtRecMed.run({
-          ":recipeId": recipeId,
-          ":url": media.url,
-          ":position": idx,
-          ":description": media.footer ?? null
-        })
-      })
-      if (!thumbnailMedia) {
-        thumbnailMedia = defaultRecipeImg
+
+      // Insert recipe media 
+      let recipeMediaRes = insertRecipeMedia(this.db!, recipe, recipeId)
+      if (recipeMediaRes.error) {
+        throw new Error(recipeMediaRes.error)
       }
-      stmtRecMed.free();
-      // Bond category onto recipe
-      const stmtRecipeCategory = this.db!.prepare(insertRecipeCategory);
-      recipe.category.forEach((category)=> {
-        stmtRecMed.run({
-          ":recipeId": recipeId,
-          ":category": category
-        })
-      })
-      stmtRecipeCategory.free();
+      const thumbnailMedia = recipeMediaRes.thumbnailMedia
+
+      // Bond categories onto recipe
+      let error = insertRecipeCategories(this.db!, recipe, recipeId)
+      if (error) {
+        throw new Error(error)
+      }
       // Insert tag
-      const stmtTag = this.db!.prepare(insertTag);
-      const stmtRecipeTag = this.db!.prepare(insertRecipeTag);
-      recipe.tags.forEach((tag)=> {
-        stmtTag.run({
-          ":tag": tag.tag,
-          ":color": tag.color
-        })
-        stmtRecipeTag.run({
-          ":recipeId": recipeId,
-          ":tag": tag.tag
-        })
-      })
-      stmtTag.free();
-      stmtRecipeTag.free();
+      error = insertTags(this.db!, recipe, recipeId)
+      if (error) {
+        throw new Error(error)
+      }
       // Insert tools
-      const stmtTool = this.db!.prepare(insertTool);
-      const stmtRecipeTool = this.db!.prepare(insertRecipeTool);
-      recipe.tools.forEach((tool) => {
-        stmtTool.run({
-          ":tool": tool.name
-        })
-        stmtRecipeTool.run({
-          ":recipeId": recipeId,
-          ":tool": tool.name,
-          ":description": tool.description! || null
-        })
-      });
-      stmtTool.free();
-      stmtRecipeTool.free();
+      error = insertTools(this.db!, recipe, recipeId)
+      if (error) {
+        throw new Error(error)
+      }
       // Insert ingredients
       const stmtIngredient = this.db!.prepare(insertTool);
       const stmtRecipeIngredient = this.db!.prepare(insertRecipeTool);
@@ -243,7 +185,6 @@ export class DBSqlite implements DBConnection {
     catch {
       console.log()
       this.db!.run(sharedLit.rollbackTransaction)
-      //return Promise.reject('DB not ready')
     }
     
     return Promise.reject('DB not ready')

@@ -1,4 +1,6 @@
+import type { Database } from "sql.js"
 import { tableRecipes } from "./recipes"
+import type { Recipe } from "@/types/Recipe"
 
 // Table names
 export const tableCategories = `Categories`
@@ -8,7 +10,7 @@ export const tableRecipeCategory = `RecipeCategory`
 export const createTableCategories =
   `CREATE TABLE IF NOT EXISTS ` + tableCategories + ` (
     category TEXT PRIMARY KEY
-  );
+  ) STRICT;
   INSERT INTO ` + tableCategories + ` VALUES
     ('APPETIZER'),
     ('SOUP'),
@@ -26,11 +28,30 @@ export const createTableRecipeCategory =
     FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id),
     FOREIGN KEY (category) REFERENCES ` + tableCategories + `(category),
     PRIMARY KEY (recipeId, category)
-  )`
+  ) STRICT`
 
 // Table insertion literals
-export const insertRecipeCategory =
+const insertRecipeCategory =
   `INSERT INTO ` + tableRecipeCategory + ` VALUES (
     :recipeId,
     :category
   )`
+
+// Insertions
+export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: number): string {
+  let error = ''
+  const stmtRecipeCategory = db.prepare(insertRecipeCategory);
+  try {
+    recipe.category.forEach((category)=> {
+      stmtRecipeCategory.run({
+          ":recipeId": recipeId,
+          ":category": category
+        })
+      })
+  }
+  catch (e){
+    error = 'Recipe category insertion failed. Cause: ' + e
+  }
+  stmtRecipeCategory.free();
+  return error
+}

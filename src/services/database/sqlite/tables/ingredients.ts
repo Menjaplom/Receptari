@@ -8,7 +8,7 @@ export const tableRecipeIngredients = `RecipeIngredients`
 export const createTableIngredients =
   `CREATE TABLE IF NOT EXISTS ` + tableIngredients + ` (
     name TEXT PRIMARY KEY
-  )`
+  ) STRICT`
 
 export const createTableRecipeIngredients =
   `CREATE TABLE IF NOT EXISTS ` + tableRecipeIngredients + ` (
@@ -20,7 +20,7 @@ export const createTableRecipeIngredients =
     FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id),
     FOREIGN KEY (ingredient) REFERENCES ` + tableIngredients + `(name),
     PRIMARY KEY (recipeId, ingredient)
-  )`
+  ) STRICT`
 
 // Table insertion literals
 export const insertIngredient = 
