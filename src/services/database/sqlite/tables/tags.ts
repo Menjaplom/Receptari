@@ -36,8 +36,7 @@ const insertRecipeTag =
   )`
 
 // Insertions
-export function insertTags(db: Database, recipe: Recipe, recipeId: number): string {
-  let error = ''
+export function insertTags(db: Database, recipe: Recipe, recipeId: number): void {
   const stmtTag = db.prepare(insertTag)
   const stmtRecipeTag = db.prepare(insertRecipeTag)
   try {
@@ -52,10 +51,11 @@ export function insertTags(db: Database, recipe: Recipe, recipeId: number): stri
       })
     })
   }
-  catch (e){
-    error = 'Recipe tag insertion failed. Cause: ' + e
+  catch (e) {
+    throw new Error('Recipe tag insertion failed. Cause: ' + e)
   }
-  stmtTag.free()
-  stmtRecipeTag.free()
-  return error
+  finally {
+    stmtTag.free()
+    stmtRecipeTag.free()
+  }
 }

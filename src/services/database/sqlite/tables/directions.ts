@@ -1,4 +1,6 @@
+import type { Database } from "sql.js"
 import { tableRecipes } from "./recipes"
+import type { Recipe } from "@/types/Recipe"
 
 // Table names
 export const tableDirections = `Directions`
@@ -34,22 +36,57 @@ export const createTableDirectionMedia =
   ) STRICT`
 
 // Table insertion literals
-export const insertDirection = 
+const insertDirection = 
   `INSERT INTO ` + tableDirections + ` VALUES (
     :description
   ) RETURNING id`
 
-export const insertRecipeDirection = 
+const insertRecipeDirection = 
   `INSERT INTO ` + tableRecipeDirections + ` VALUES (
     :recipeId,
     :directionId,
     :position
   )`
 
-export const insertDirectionMedia = 
+const insertDirectionMedia = 
   `INSERT INTO ` + tableDirectionMedia + ` VALUES (
     :directionId,
     :position,
     :url,
     :footer
   )`
+
+// Insertions
+export function insertDirections(db: Database, recipe: Recipe, recipeId: number): void {
+  const stmtDirection = db.prepare(insertDirection);
+  const stmtRecipeDirections = db.prepare(insertRecipeDirection);
+  const stmtDirectionMedia = db.prepare(insertDirectionMedia);
+  try {
+    recipe.directions.forEach((dir, idx) => {
+      const directionId = stmtDirection.getAsObject({
+        ":description": dir.description
+      })
+      stmtRecipeDirections.run({
+        ":recipeId": recipeId,
+        ":directionId": directionId['id'],
+        ":position": idx
+      })
+      dir.media.forEach((media, mIdx) => {
+        stmtDirectionMedia.run({
+          ":directionId": directionId['id'],
+          ":position": mIdx,
+          ":url": media.url,
+          ":footer": media.footer ?? null
+        })
+      })
+    });
+  }
+  catch (e) {
+    throw new Error('Recipe direction insertion failed. Cause: ' + e)
+  }
+  finally {
+    stmtDirection.free();
+    stmtRecipeDirections.free();
+    stmtDirectionMedia.free();
+  }
+}

@@ -38,20 +38,20 @@ const insertRecipeCategory =
   )`
 
 // Insertions
-export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: number): string {
-  let error = ''
+export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: number): void {
   const stmtRecipeCategory = db.prepare(insertRecipeCategory);
   try {
     recipe.category.forEach((category)=> {
       stmtRecipeCategory.run({
-          ":recipeId": recipeId,
-          ":category": category
-        })
+        ":recipeId": recipeId,
+        ":category": category
       })
+    })
   }
-  catch (e){
-    error = 'Recipe category insertion failed. Cause: ' + e
+  catch (e) {
+    throw new Error('Recipe category insertion failed. Cause: ' + e)
   }
-  stmtRecipeCategory.free();
-  return error
+  finally {
+    stmtRecipeCategory.free();
+  }
 }

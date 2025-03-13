@@ -1,4 +1,6 @@
+import type { Database } from "sql.js";
 import { tableRecipes } from "./recipes"
+import type { Recipe } from "@/types/Recipe";
 
 // Table names
 export const tableRecipeComponents = `RecipeComponents`
@@ -15,9 +17,29 @@ export const createTableRecipeComponents =
   ) STRICT`
 
 // Table insertion literals
-export const insertRecipeComponent =
+const insertRecipeComponent =
   `INSERT INTO ` + tableRecipeComponents + ` VALUES (
       :baseRecipe,
       :component,
       :position
     )`
+
+// Insertions
+export function insertComponents(db: Database, recipe: Recipe, recipeId: number): void {
+  const stmtRecipeComponent = db.prepare(insertRecipeComponent);
+  try {
+    recipe.components.forEach((comp, idx)=> {
+      stmtRecipeComponent.run({
+        ":baseRecipe": recipeId,
+        ":component": comp.id,
+        ":position": idx
+      })
+    })
+  }
+  catch (e) {
+    throw new Error('Recipe component insertion failed. Cause: ' + e)
+  }
+  finally {
+    stmtRecipeComponent.free();
+  }
+}

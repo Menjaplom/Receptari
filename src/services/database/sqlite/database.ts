@@ -4,14 +4,13 @@ import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
 import type { Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
-import { isImage } from '@/types/Media'
-import { createTableRecipes, createTableRecipeMedia, insertRecipeMedia, insertRecipeBody } from './tables/recipes'
+import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias } from './tables/recipes'
 import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
 import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
 import { createTableRecipeTools, createTableTools, insertTools } from './tables/tools'
-import { createTableIngredients, createTableRecipeIngredients } from './tables/ingredients'
-import { createTableDirectionMedia, createTableDirections, createTableRecipeDirections, insertDirection, insertDirectionMedia, insertRecipeDirection } from './tables/directions'
-import { createTableRecipeComponents, insertRecipeComponent } from './tables/components'
+import { createTableIngredients, createTableRecipeIngredients, insertIngredients } from './tables/ingredients'
+import { createTableDirectionMedia, createTableDirections, createTableRecipeDirections, insertDirections } from './tables/directions'
+import { createTableRecipeComponents, insertComponents } from './tables/components'
 
 export class DBSqlite implements DBConnection {
   ready: boolean
@@ -87,113 +86,31 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve()
   }
 
-  
-
-  #insertDirection(recipe: Recipe, recipeId: number){
-    const stmtDirection = this.db!.prepare(insertDirection);
-    const stmtRecipeDirections = this.db!.prepare(insertRecipeDirection);
-    const stmtDirectionMedia = this.db!.prepare(insertDirectionMedia);
-    recipe.directions.forEach((dir, idx) => {
-      const directionId = stmtDirection.getAsObject({
-        ":description": dir.description
-      })
-      stmtRecipeDirections.run({
-        ":recipeId": recipeId,
-        ":directionId": directionId['id'],
-        ":position": idx
-      })
-      dir.media.forEach((media, idx) => {
-        stmtDirectionMedia.run({
-          ":directionId": directionId['id'],
-          ":position": idx,
-          ":url": media.url,
-          ":footer": media.footer! || null
-        })
-      })
-    });
-    stmtDirection.free();
-    stmtRecipeDirections.free();
-    stmtDirectionMedia.free();
-  }
-
-  // TODO: Break into smaller functions
-  // TODO: check the order of things gets infered from the indexes of the arrays where data is stored (see components section)
   async addRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
     if (!this.ready) return Promise.reject('DB not ready')
     this.db!.run(sharedLit.beginTransaction)
     try {
-      // Insert recipe body
-      let recipeBodyRes = insertRecipeBody(this.db!, recipe)
-      if (recipeBodyRes.error) {
-        throw new Error(recipeBodyRes.error)
-      }
-      const recipeId = recipeBodyRes.recipeId
-
-      // Insert recipe media 
-      let recipeMediaRes = insertRecipeMedia(this.db!, recipe, recipeId)
-      if (recipeMediaRes.error) {
-        throw new Error(recipeMediaRes.error)
-      }
-      const thumbnailMedia = recipeMediaRes.thumbnailMedia
-
-      // Bond categories onto recipe
-      let error = insertRecipeCategories(this.db!, recipe, recipeId)
-      if (error) {
-        throw new Error(error)
-      }
-      // Insert tag
-      error = insertTags(this.db!, recipe, recipeId)
-      if (error) {
-        throw new Error(error)
-      }
-      // Insert tools
-      error = insertTools(this.db!, recipe, recipeId)
-      if (error) {
-        throw new Error(error)
-      }
-      // Insert ingredients
-      const stmtIngredient = this.db!.prepare(insertTool);
-      const stmtRecipeIngredient = this.db!.prepare(insertRecipeTool);
-      recipe.ingredients.forEach((ingr, idx) => {
-        stmtIngredient.run({
-          ":name": ingr.name
-        })
-        stmtRecipeIngredient.run({
-          ":recipeId": recipeId,
-          ":ingredient": ingr.name,
-          ":position": idx,
-          ":units": ingr.units! || null,
-          ":measur": ingr.measure! || null
-        })
-      });
-      stmtIngredient.free();
-      stmtRecipeIngredient.free();
-      // Insert directions
-      this.#insertDirection(recipe, recipeId)
-      // Insert components
-      const stmtRecipeComponent = this.db!.prepare(insertRecipeComponent);
-      recipe.components.forEach((comp, idx)=> {
-        stmtRecipeComponent.run({
-          ":baseRecipe": recipeId,
-          ":component": comp.id,
-          ":position": idx
-        })
-      })
-      stmtRecipeComponent.free();
+      const recipeId = insertRecipeBody(this.db!, recipe)
+      const thumbnailMedia = insertRecipeMedias(this.db!, recipe, recipeId)
+      insertRecipeCategories(this.db!, recipe, recipeId)
+      insertTags(this.db!, recipe, recipeId)
+      insertTools(this.db!, recipe, recipeId)
+      insertIngredients(this.db!, recipe, recipeId)
+      insertDirections(this.db!, recipe, recipeId)
+      insertComponents(this.db!, recipe, recipeId)
       Promise.resolve({id: recipeId, title: recipe.title, media: thumbnailMedia})
     }
-    catch {
-      console.log()
+    catch (e) {
+      console.log('AddRecipe rolling back. Error:' + e)
       this.db!.run(sharedLit.rollbackTransaction)
     }
-    
     return Promise.reject('DB not ready')
   }
  
-  listAllRecipes(): Promise<Array<RecipeThumbnail>> {
+  async listAllRecipes(): Promise<Array<RecipeThumbnail>> {
     throw new Error('Method not implemented.')
   }
-  insertRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
+  async insertRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
     throw new Error('Method not implemented.')
   }
 

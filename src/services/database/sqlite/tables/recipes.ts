@@ -1,5 +1,4 @@
 import type { Recipe } from "@/types/Recipe";
-import { insertDirection, insertRecipeDirection, insertDirectionMedia } from "./directions";
 import type { Database } from "sql.js";
 import { isImage } from "@/types/Media";
 
@@ -41,7 +40,7 @@ const insertRecipe =
     :difficulty
   ) RETURNING id`
 
-const insertRecipeMed =
+const insertRecipeMedia =
 `INSERT INTO ` + tableRecipeMedia + ` VALUES (
     :recipeId,
     :url,
@@ -50,13 +49,8 @@ const insertRecipeMed =
 )`
 
 // Insertions
-type RecipeInsertionResponse = {
-  recipeId: number;
-  error: string;
-}
-
-export function insertRecipeBody(db: Database, recipe: Recipe): RecipeInsertionResponse {
-  let result = { recipeId: -1, error: "" }
+export function insertRecipeBody(db: Database, recipe: Recipe): number {
+  let result
   const stmtRecBody = db.prepare(insertRecipe);
   try {
     const recipeId = stmtRecBody.getAsObject({
@@ -67,27 +61,24 @@ export function insertRecipeBody(db: Database, recipe: Recipe): RecipeInsertionR
       ':cookTime': recipe.cookTime ?? null,
       ':difficulty': recipe.difficulty ?? null
     })
-    result.recipeId = recipeId['id']! as number
+    result = recipeId['id']! as number
   }
-  catch (e){
-    result.error = 'Recipe body insertion failed. Cause: ' + e
+  catch (e) {
+    throw new Error('Recipe body insertion failed. Cause: ' + e)
   }
-  stmtRecBody.free()
+  finally {
+    stmtRecBody.free()
+  }
   return result
 }
 
-type RecipeMediaInsertionResponse = {
-  thumbnailMedia: string;
-  error: string;
-}
-
-export function insertRecipeMedia(db: Database, recipe: Recipe, recipeId: number): RecipeMediaInsertionResponse {
-  let result = { thumbnailMedia: '', error: '' };
-  const stmtRecMed = db.prepare(insertRecipeMed);
+export function insertRecipeMedias(db: Database, recipe: Recipe, recipeId: number): string {
+  let result = ''
+  const stmtRecMed = db.prepare(insertRecipeMedia);
   try {
     recipe.media.forEach((media, idx)=> {
-      if (!result.thumbnailMedia && isImage(media.url)) {
-        result.thumbnailMedia = media.url
+      if (!result && isImage(media.url)) {
+        result = media.url
       }
       stmtRecMed.run({
         ":recipeId": recipeId,
@@ -97,9 +88,11 @@ export function insertRecipeMedia(db: Database, recipe: Recipe, recipeId: number
       })
     })
   }
-  catch (e){
-    result.error = 'Recipe media insertion failed. Cause: ' + e
+  catch (e) {
+    throw new Error('Recipe media insertion failed. Cause: ' + e)
   }
-  stmtRecMed.free()
+  finally {
+    stmtRecMed.free()
+  }
   return result
 }

@@ -36,8 +36,7 @@ const insertRecipeTool =
   )`
 
 // Insertions
-export function insertTools(db: Database, recipe: Recipe, recipeId: number): string {
-  let error = ''
+export function insertTools(db: Database, recipe: Recipe, recipeId: number): void {
   const stmtTool = db.prepare(insertTool);
   const stmtRecipeTool = db.prepare(insertRecipeTool);
   try {
@@ -48,14 +47,15 @@ export function insertTools(db: Database, recipe: Recipe, recipeId: number): str
       stmtRecipeTool.run({
         ":recipeId": recipeId,
         ":tool": tool.name,
-        ":description": tool.description! || null
+        ":description": tool.description ?? null
       })
     });
   }
-  catch (e){
-    error = 'Recipe tag insertion failed. Cause: ' + e
+  catch (e) {
+    throw new Error('Recipe tool insertion failed. Cause: ' + e)
   }
-  stmtTool.free();
-  stmtRecipeTool.free();
-  return error
+  finally {
+    stmtTool.free();
+    stmtRecipeTool.free();
+  }
 }
