@@ -1,4 +1,3 @@
-import { url } from 'inspector'
 import { boolean, z } from 'zod'
 
 export const mediaSchema = z.object({

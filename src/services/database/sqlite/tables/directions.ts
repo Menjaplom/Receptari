@@ -26,13 +26,12 @@ export const createTableRecipeDirections =
 
 export const createTableDirectionMedia =
   `CREATE TABLE IF NOT EXISTS ` + tableDirectionMedia + ` (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     directionId INTEGER,
-    id INTEGER AUTOINCREMENT,
     position INTEGER NOT NULL,
     url TEXT NOT NULL,
     footer TEXT,
-    FOREIGN KEY (directionId) REFERENCES ` + tableDirections + `(id),
-    PRIMARY KEY (directionId, id)
+    FOREIGN KEY (directionId) REFERENCES ` + tableDirections + `(id)
   ) STRICT`
 
 // Table insertion literals

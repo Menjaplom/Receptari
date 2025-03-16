@@ -10,5 +10,4 @@ export interface DBConnection {
 
   listAllRecipes(): Promise<Array<RecipeThumbnail>>
 
-  //insertRecipe(recipe: NewRecipe): Promise<recipeThumbnailType>
 }

@@ -4,7 +4,7 @@ import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
 import type { Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
-import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias } from './tables/recipes'
+import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails } from './tables/recipes'
 import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
 import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
 import { createTableRecipeTools, createTableTools, insertTools } from './tables/tools'
@@ -98,20 +98,25 @@ export class DBSqlite implements DBConnection {
       insertIngredients(this.db!, recipe, recipeId)
       insertDirections(this.db!, recipe, recipeId)
       insertComponents(this.db!, recipe, recipeId)
-      Promise.resolve({id: recipeId, title: recipe.title, media: thumbnailMedia})
+      this.db!.run(sharedLit.commitTransaction)
+      return Promise.resolve({id: recipeId, title: recipe.title, media: thumbnailMedia})
     }
     catch (e) {
       console.log('AddRecipe rolling back. Error:' + e)
       this.db!.run(sharedLit.rollbackTransaction)
+      return Promise.reject('Transaction failed: ' + e)
     }
-    return Promise.reject('DB not ready')
   }
  
   async listAllRecipes(): Promise<Array<RecipeThumbnail>> {
-    throw new Error('Method not implemented.')
-  }
-  async insertRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
-    throw new Error('Method not implemented.')
+    if (!this.ready) return Promise.reject('DB not ready')
+    try {
+      let recipes = getAllRecipeThumbnails(this.db!)
+      return Promise.resolve(recipes)
+    }
+    catch (e) {
+      return Promise.reject(e)
+    }
   }
 
 }

@@ -1,6 +1,8 @@
 import type { Recipe } from "@/types/Recipe";
 import type { Database } from "sql.js";
 import { isImage } from "@/types/Media";
+import type { RecipeThumbnail } from "@/types/RecipeThumbnail";
+import { defaultRecipeImg } from "@/literals";
 
 // Table name
 export const tableRecipes = `Recipes`
@@ -10,7 +12,7 @@ export const tableRecipeMedia = `RecipeMedia`
 export const createTableRecipes =  
   `CREATE TABLE IF NOT EXISTS ` + tableRecipes + ` (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    title TEXT NOT NULL,
     description TEXT, 
     yield INTEGER,
     prepTime INTEGER,
@@ -20,19 +22,19 @@ export const createTableRecipes =
 
 export const createTableRecipeMedia = 
   `CREATE TABLE IF NOT EXISTS ` + tableRecipeMedia + ` (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     recipeId INTEGER,
-    id INTEGER AUTOINCREMENT,
     url TEXT NOT NULL,
     position INTEGER NOT NULL,
     footer TEXT,
-    FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id),
-    PRIMARY KEY (recipeId, id)
+    FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id)
   ) STRICT`
 
-// Table insertion literal
+
+// Insertions
 const insertRecipe =
   `INSERT INTO ` + tableRecipes + ` VALUES (
-    :name,
+    :title,
     :description,
     :yield,
     :prepTime,
@@ -48,13 +50,12 @@ const insertRecipeMedia =
     :footer
 )`
 
-// Insertions
 export function insertRecipeBody(db: Database, recipe: Recipe): number {
   let result
   const stmtRecBody = db.prepare(insertRecipe);
   try {
     const recipeId = stmtRecBody.getAsObject({
-      ':name': recipe.title,
+      ':title': recipe.title,
       ':description': recipe.description ?? null,
       ':yield': recipe.recipeYield ?? null,
       ':prepTime': recipe.prepTime ?? null,
@@ -95,4 +96,46 @@ export function insertRecipeMedias(db: Database, recipe: Recipe, recipeId: numbe
     stmtRecMed.free()
   }
   return result
+}
+
+
+// Queries
+const selectAllRecipesBasic = 
+  `SELECT id, title FROM ` + tableRecipes + ` ORDER BY title ASC`
+
+const selectRecipeMediaUrl = 
+  `SELECT url FROM ` + tableRecipeMedia + ` WHERE recipeId = :id ORDER BY position ASC`
+
+export function getAllRecipeThumbnails(db: Database): Array<RecipeThumbnail> {
+  let thumbArr: Array<RecipeThumbnail> = []
+  try {
+    let result = db.exec(selectAllRecipesBasic)
+    const idIdx= result[0].columns.findIndex((e)=> e == 'id') as number
+    const titleIdx = result[0].columns.findIndex((e)=> e == 'title') as number
+    thumbArr = result[0].values.map((thumb) => {
+      let recipeId = thumb[idIdx] as number
+      const stmtRecMedUrl = db.prepare(selectRecipeMediaUrl);
+      stmtRecMedUrl.bind([recipeId]);
+      while (stmtRecMedUrl.step()) {
+        let value = stmtRecMedUrl.get()
+        console.log(JSON.stringify(value));
+        if (isImage(value[0] as string)) {
+          return {
+            id: recipeId,
+            title: thumb[titleIdx] as string,
+            media: value[0] as string
+          }
+        }
+      }
+      return {
+        id: recipeId,
+        title: thumb[titleIdx] as string,
+        media: defaultRecipeImg as string
+      }
+    })
+  }
+  catch (e) {
+    throw new Error('Get recipe thumbnails failed. Cause: ' + e)
+  }
+  return thumbArr
 }
