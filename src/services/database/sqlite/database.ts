@@ -28,7 +28,6 @@ export class DBSqlite implements DBConnection {
     let fetchPromise
     try {
       fetchPromise = fetch(dbURLLit).then(r => {
-        console.log('im accepting the goddamn promise')
         if(JSON.stringify(r) == '{}') {
           return { response: undefined, going: false }
         }
@@ -87,10 +86,11 @@ export class DBSqlite implements DBConnection {
   }
 
   async addRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
-    if (!this.ready) return Promise.reject('DB not ready')
+    if (!this.ready) return Promise.reject('addRecipe: DB not ready')
     this.db!.run(sharedLit.beginTransaction)
     try {
       const recipeId = insertRecipeBody(this.db!, recipe)
+      console.log('addRecipe recipe id: ' + recipeId)
       const thumbnailMedia = insertRecipeMedias(this.db!, recipe, recipeId)
       insertRecipeCategories(this.db!, recipe, recipeId)
       insertTags(this.db!, recipe, recipeId)
@@ -99,6 +99,7 @@ export class DBSqlite implements DBConnection {
       insertDirections(this.db!, recipe, recipeId)
       insertComponents(this.db!, recipe, recipeId)
       this.db!.run(sharedLit.commitTransaction)
+      console.log('Recipe ' + recipe.title + 'commited to db.')
       return Promise.resolve({id: recipeId, title: recipe.title, media: thumbnailMedia})
     }
     catch (e) {
@@ -109,7 +110,7 @@ export class DBSqlite implements DBConnection {
   }
  
   async listAllRecipes(): Promise<Array<RecipeThumbnail>> {
-    if (!this.ready) return Promise.reject('DB not ready')
+    if (!this.ready) return Promise.reject('listAllRecipes: DB not ready')
     try {
       let recipes = getAllRecipeThumbnails(this.db!)
       return Promise.resolve(recipes)

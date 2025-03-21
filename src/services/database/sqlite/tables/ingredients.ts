@@ -26,7 +26,7 @@ export const createTableRecipeIngredients =
 
 // Table insertion literals
 const insertIngredient = 
-  `INSERT IGNORE INTO ` + tableIngredients + ` VALUES (
+  `INSERT OR IGNORE INTO ` + tableIngredients + ` VALUES (
     :name
   )`
 

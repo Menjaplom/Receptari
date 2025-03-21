@@ -24,7 +24,7 @@ export const createTableRecipeTools =
 
 // Table insertion literals
 const insertTool = 
-  `INSERT IGNORE INTO ` + tableTools + ` VALUES (
+  `INSERT OR IGNORE INTO ` + tableTools + ` VALUES (
     :tool
   )`
 

@@ -32,7 +32,7 @@ export const createTableRecipeCategory =
 
 // Table insertion literals
 const insertRecipeCategory =
-  `INSERT INTO ` + tableRecipeCategory + ` VALUES (
+  `INSERT INTO ` + tableRecipeCategory + `(recipeId, category) VALUES (
     :recipeId,
     :category
   )`

@@ -33,7 +33,7 @@ export const createTableRecipeMedia =
 
 // Insertions
 const insertRecipe =
-  `INSERT INTO ` + tableRecipes + ` VALUES (
+  `INSERT INTO ` + tableRecipes + `(title, description, yield, prepTime, cookTime, difficulty) VALUES (
     :title,
     :description,
     :yield,
@@ -43,7 +43,7 @@ const insertRecipe =
   ) RETURNING id`
 
 const insertRecipeMedia =
-`INSERT INTO ` + tableRecipeMedia + ` VALUES (
+`INSERT INTO ` + tableRecipeMedia + `(recipeId, url, position, footer) VALUES (
     :recipeId,
     :url,
     :position,

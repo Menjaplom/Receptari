@@ -36,7 +36,7 @@ export const createTableDirectionMedia =
 
 // Table insertion literals
 const insertDirection = 
-  `INSERT INTO ` + tableDirections + ` VALUES (
+  `INSERT INTO ` + tableDirections + `(description) VALUES (
     :description
   ) RETURNING id`
 
@@ -48,7 +48,7 @@ const insertRecipeDirection =
   )`
 
 const insertDirectionMedia = 
-  `INSERT INTO ` + tableDirectionMedia + ` VALUES (
+  `INSERT INTO ` + tableDirectionMedia + `(directionId, position, url, footer) VALUES (
     :directionId,
     :position,
     :url,
