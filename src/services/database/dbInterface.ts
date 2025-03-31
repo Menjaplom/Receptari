@@ -6,8 +6,10 @@ export interface DBConnection {
 
   connect(dbName: string): Promise<void>
 
-  addRecipe(recipe: Recipe): Promise<RecipeThumbnail> // TODO: Add proper return value
+  addRecipe(recipe: Recipe): Promise<RecipeThumbnail>
 
   listAllRecipes(): Promise<Array<RecipeThumbnail>>
 
+  getRecipe(recipeId: number): Promise<Recipe>
+  
 }

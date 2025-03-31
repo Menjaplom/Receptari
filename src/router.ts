@@ -1,11 +1,18 @@
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import RecipeList from './components/RecipeList.vue'
+import ViewRecipe from './components/ViewRecipe.vue'
 import NewRecipe from './components/newRecipe/NewRecipe.vue'
+import { number } from 'zod'
 
 const routes = [
-  { path: '/', component: RecipeList },
+  {
+    path: '/',
+    name: 'home',
+    component: RecipeList
+  },
   {
     path: '/new',
+    name: 'newRecipe',
     component: NewRecipe,
     props: {
       recipe: null/*{
@@ -23,11 +30,17 @@ const routes = [
         components: []
       }*/
     }
+  },
+  {
+    path: '/recipe/:id/:title',
+    name: 'viewRecipe', 
+    component: ViewRecipe,
+    props: true
   }
 ]
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes
 })
 

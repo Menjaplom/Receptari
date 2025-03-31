@@ -14,9 +14,10 @@ export const createTableRecipes =
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT, 
-    yield INTEGER,
-    prepTime INTEGER,
-    cookTime INTEGER,
+    yieldUnits INTEGER,
+    yieldMeasure TEXT,
+    prepTime TEXT,
+    cookTime TEXT,
     difficulty INTEGER
   ) STRICT`
 
@@ -57,7 +58,8 @@ export function insertRecipeBody(db: Database, recipe: Recipe): number {
     const recipeId = stmtRecBody.getAsObject({
       ':title': recipe.title,
       ':description': recipe.description ?? null,
-      ':yield': recipe.recipeYield ?? null,
+      ':yieldUnits': recipe.yield.units ?? null,
+      ':yieldMeasure': recipe.yield.measure ?? null,
       ':prepTime': recipe.prepTime ?? null,
       ':cookTime': recipe.cookTime ?? null,
       ':difficulty': recipe.difficulty ?? null

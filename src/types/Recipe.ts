@@ -4,6 +4,7 @@ import { tagSchema, type TagType } from './Tag'
 import { mediaSchema, NewMedia } from './Media'
 import { ingredientSchema, NewIngredient } from './Ingredient'
 import { directionSchema, NewDirection } from './Direction'
+import { yieldSchema, type Yield } from './Yield'
 
 export const recipeBaseSchema = z.object({
   id: z.number(),
@@ -12,7 +13,7 @@ export const recipeBaseSchema = z.object({
   category: z.string().array(),
   tags: z.array(tagSchema),
   description: z.string().optional(),
-  recipeYield: z.number().optional(),
+  yield: yieldSchema,
   prepTime: z.string().optional(),
   cookTime: z.string().optional(),
   tools:z.array(toolSchema),
@@ -35,6 +36,7 @@ export const emptyRecipe: Recipe =  {
   media: [],
   category: [],
   tags: [],
+  yield: {},
   tools: [],
   ingredients:[],
   directions: [],
@@ -61,7 +63,7 @@ export class NewRecipe {
   category: string[]
   tags: TagType[]
   description?: string
-  recipeYield?: number
+  yield: Yield
   prepTime?: string
   cookTime?: string
   tools: Tool[]
@@ -77,7 +79,7 @@ export class NewRecipe {
     this.category = recipe.category
     this.tags = recipe.tags
     this.description = recipe.description
-    this.recipeYield = recipe.recipeYield
+    this.yield = recipe.yield
     this.prepTime = recipe.prepTime
     this.cookTime = recipe.cookTime
     this.tools = recipe.tools
@@ -96,7 +98,7 @@ export class NewRecipe {
       category: this.category,
       tags: this.tags,
       description: this.description,
-      recipeYield: this.recipeYield,
+      yield: this.yield,
       prepTime: this.prepTime,
       cookTime: this.cookTime,
       tools: this.tools,

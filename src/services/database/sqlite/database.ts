@@ -7,7 +7,7 @@ import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails } from './tables/recipes'
 import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
 import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
-import { createTableRecipeTools, createTableTools, insertTools } from './tables/tools'
+import { createTableRecipeTools, insertTools } from './tables/tools'
 import { createTableIngredients, createTableRecipeIngredients, insertIngredients } from './tables/ingredients'
 import { createTableDirectionMedia, createTableDirections, createTableRecipeDirections, insertDirections } from './tables/directions'
 import { createTableRecipeComponents, insertComponents } from './tables/components'
@@ -59,8 +59,6 @@ export class DBSqlite implements DBConnection {
       console.log('Table TableTags created.')
       this.db.run(createTableRecipeTags)
       console.log('Table RecipeTags created.')
-      this.db.run(createTableTools)
-      console.log('Table Tools created.')
       this.db.run(createTableRecipeTools)
       console.log('Table RecipeTools created.')
       this.db.run(createTableIngredients)
