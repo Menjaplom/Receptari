@@ -1,6 +1,7 @@
 import type { Recipe } from "@/types/Recipe";
 import type { DBConnection } from "../dbInterface";
 import type { RecipeThumbnail } from "@/types/RecipeThumbnail";
+import { basicRecipe, compoundRecipe } from "./mockRecipes";
 
 export class MockDB implements DBConnection {
     ready: boolean;
@@ -118,33 +119,15 @@ export class MockDB implements DBConnection {
     }
 
     getRecipe(recipeId: number): Promise<Recipe> {
-      let recipe: Recipe = {
-        id: 0,
-        title: 'Mocked Recipe',
-        media: [{url: '../../static/debug/recipeThumbnail.png',
-          footer: 'some footer',
-          }],
-        category: ['category example'],
-        tags: [{tag: 'tag 0', color: 'hex color string'}],
-        description: 'some description',
-        yield: {units: 2, measure: 'portions'},
-        prepTime: '10 min',
-        cookTime: '30 min',
-        tools: [{name:'knife'}, {name: 'spoons'}, {name: 'grinder', description: ', soul grinder'}],
-        difficulty: 1,
-        ingredients:[{
-          name: 'ingredient 0',
-          units: 0,
-          measure: 'g'
-        }],
-        directions: [{
-          description: 'a very very long direction',
-          media:[{url: '../../static/debug/recipeThumbnail.png' }]
-        }],
-        components: []
-
+      console.log(recipeId)
+      let recipe: Recipe;
+      if (recipeId === 0) {
+        recipe = compoundRecipe
       }
-      return Promise.resolve(recipe)
+      else {
+        recipe = basicRecipe
+      }
+        return Promise.resolve(recipe)
     }
 
 }

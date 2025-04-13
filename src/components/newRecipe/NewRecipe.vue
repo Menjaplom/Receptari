@@ -7,6 +7,7 @@ import { ref, computed, inject } from 'vue'
 import { emptyRecipe, NewRecipe, type Recipe } from '@/types/Recipe'
 import type { DBConnection } from '@/services/database/dbInterface'
 import { dbLit } from '@/literals'
+import router from '@/router'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -52,7 +53,10 @@ async function saveRecipe() {
   let saveRecipe = JSON.stringify(recipe.value.outputRecipe())*/
   let recipe: Recipe = newRecipe.value.exportRecipe()
   console.log(JSON.stringify(recipe))
-  db.value.addRecipe(recipe)
+  db.value.addRecipe(recipe).then((thumbnail) => {
+    console.log('Redirecting to Main page...')
+    setTimeout(() => router.replace({path: '/', }), 100);
+  })
 
 }
 

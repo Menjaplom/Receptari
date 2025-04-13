@@ -15,20 +15,7 @@ const routes = [
     name: 'newRecipe',
     component: NewRecipe,
     props: {
-      recipe: null/*{
-        title: '',
-        media: [],
-        category: [''], // Currently hardcoding a single value to keep it simple
-        tags: [''], // Currently hardcoding a single value to keep it simple
-        recipeYield: -1,
-        prepTime: '',
-        cookTime: '',
-        tools: [''], // Currently hardcoding a single value to keep it simple
-        difficulty: 0,
-        ingredients: [],
-        directions: [],
-        components: []
-      }*/
+      recipe: null
     }
   },
   {

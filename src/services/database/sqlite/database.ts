@@ -19,7 +19,6 @@ export class DBSqlite implements DBConnection {
   constructor() {
     this.ready = false
   }
-
   async connect(dbName: string): Promise<void> {
     const sqlPromise = initSqlJs({ locateFile: (_) => '/node_modules/sql.js/dist/sql-wasm.wasm' })
     console.log('Wasm promised')
@@ -118,4 +117,7 @@ export class DBSqlite implements DBConnection {
     }
   }
 
+  getRecipe(recipeId: number): Promise<Recipe> {
+    throw new Error('Method not implemented.')
+  }
 }
