@@ -8,6 +8,9 @@ import { emptyRecipe, NewRecipe, type Recipe } from '@/types/Recipe'
 import type { DBConnection } from '@/services/database/dbInterface'
 import { dbLit } from '@/literals'
 import router from '@/router'
+import { HSLToHexStr, newHSLPastel } from '@/utils/colors'
+import TagComp from '../tag/TagComp.vue'
+import NewTags from './NewTags.vue'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -16,7 +19,7 @@ const props = defineProps<{
   recipe: Recipe | null
 }>()
 const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
-
+const tagSugestionList = await db.value.getAllTags()
 //let test_recipe: Recipe = props.recipe
 let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe?? emptyRecipe))
 /*fetch('/static/recipes/braç_de_gitano_de_crema/Braç_de_gitano_de_crema.json')
@@ -69,8 +72,13 @@ async function saveRecipe() {
     <h3>Nom de la recepta</h3>
     <input type="text" id="title" name="title" v-model="newRecipe.title" />
   </div>
-
+  
   <img src="" alt="" id="main_image" />
+
+  <div>
+    <h3>Description</h3>
+    <input type="text" id="title" name="title" v-model="newRecipe.title" />
+  </div>  
 
   <div>
     <h3>Categories</h3>
@@ -79,12 +87,14 @@ async function saveRecipe() {
 
   <div>
     <h3>Tags</h3>
-    <input type="text" id="tags" name="tags" v-model="newRecipe.tags[0]" />
+    <NewTags v-model:new-tags="newRecipe.tags" />
+    {{JSON.stringify(newRecipe.tags)}}
   </div>
 
   <div>
     <h3>Recipe yield</h3>
-    <input type="text" id="recipe_yield" name="recipe_yield" v-model="newRecipe.recipeYield" />
+    <input type="number" id="yield_units" name="yield_units" v-model="newRecipe.yield.units" />
+    <input type="text" id="yield_measure" name="yield_measure" v-model="newRecipe.yield.measure" />
   </div>
 
   <div>
@@ -99,7 +109,7 @@ async function saveRecipe() {
 
   <div>
     <h3>Difficulty</h3>
-    <input type="text" id="difficulty" name="difficulty" v-model="newRecipe.difficulty" />
+    <input type="number" id="difficulty" name="difficulty" v-model="newRecipe.difficulty" />
   </div>
 
   <div>

@@ -24,7 +24,7 @@ await checkDBstate()
   <h2 v-if="thumbnails.length < 1">No recipes. Please insert one</h2>
   <section class="cards" v-else>
     <article class="card" v-for="thumbnail in thumbnails" :key="thumbnail.id">
-      <RouterLink :to="{ name: 'viewRecipe', params: { id: thumbnail.id, title: thumbnail.title } }">
+      <RouterLink :to="{ name: 'viewRecipe', params: { idStr: thumbnail.id.toString(), title: thumbnail.title } }">
         <p>{{thumbnail.id}}</p>
         <picture>
           <source :src="thumbnail.media" />

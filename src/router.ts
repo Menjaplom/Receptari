@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import RecipeList from './components/RecipeList.vue'
 import ViewRecipe from './components/ViewRecipe.vue'
 import NewRecipe from './components/newRecipe/NewRecipe.vue'
-import { number } from 'zod'
 
 const routes = [
   {
@@ -19,7 +18,7 @@ const routes = [
     }
   },
   {
-    path: '/recipe/:id/:title',
+    path: '/recipe/:idStr(\\d+)/:title',
     name: 'viewRecipe', 
     component: ViewRecipe,
     props: true

@@ -108,6 +108,9 @@ const selectAllRecipesBasic =
 const selectRecipeMediaUrl = 
   `SELECT url FROM ` + tableRecipeMedia + ` WHERE recipeId = :id ORDER BY position ASC`
 
+const selectRecipe = 
+  `SELECT * FROM ` + tableRecipes + ` WHERE id = :id`
+
 export function getAllRecipeThumbnails(db: Database): Array<RecipeThumbnail> {
   let thumbArr: Array<RecipeThumbnail> = []
   try {
@@ -140,4 +143,17 @@ export function getAllRecipeThumbnails(db: Database): Array<RecipeThumbnail> {
     throw new Error('Get recipe thumbnails failed. Cause: ' + e)
   }
   return thumbArr
+}
+
+export function getRecipeBody(db: Database, recipeId: number, recipe: Recipe) {
+  try {
+    let result = db.exec(selectRecipe)
+    recipe.id = recipeId
+
+    //recipe.title = result[0].values
+    console.log(JSON.stringify(result))
+  }
+  catch (e) {
+    throw new Error('Get recipe thumbnails failed. Cause: ' + e)
+  }
 }

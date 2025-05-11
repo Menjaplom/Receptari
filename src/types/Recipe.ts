@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { toolSchema, type Tool } from './Tool'
-import { tagSchema, type TagType } from './Tag'
+import { tagSchema, type Tag } from './Tag'
 import { mediaSchema, NewMedia } from './Media'
 import { ingredientSchema, NewIngredient } from './Ingredient'
 import { directionSchema, NewDirection } from './Direction'
@@ -61,7 +61,7 @@ export class NewRecipe {
   title: string
   media: NewMedia[]
   category: string[]
-  tags: TagType[]
+  tags: Tag[]
   description?: string
   yield: Yield
   prepTime?: string

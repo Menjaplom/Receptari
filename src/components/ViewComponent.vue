@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { dbLit } from '@/literals';
-import type { DBConnection } from '@/services/database/dbInterface';
-import { inject, ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import MediaCarrousel from './media/MediaCarrousel.vue';
 import type { Recipe } from '@/types/Recipe';
 

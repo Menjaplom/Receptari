@@ -1,5 +1,6 @@
 import { type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
+import type { Tag } from '@/types/Tag'
 
 export interface DBConnection {
   ready: boolean
@@ -12,4 +13,5 @@ export interface DBConnection {
 
   getRecipe(recipeId: number): Promise<Recipe>
   
+  getAllTags(): Promise<Tag[]>
 }

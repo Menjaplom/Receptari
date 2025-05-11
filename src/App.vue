@@ -15,19 +15,25 @@ import {
 import { type DBConnection } from '@/services/database/dbInterface'
 import { DBSqlite } from '@/services/database/sqlite/database'
 import { MockDB } from './services/database/debug/mockDB'
+import type { RecipeThumbnail } from './types/RecipeThumbnail'
 
 const loggedInRef: Ref<boolean> = ref(true) // TODO: SET TO FALSE BY DEFAULT
 provide(loggedInLit, loggedInRef)
+
 // Modify at will
 provide(usernameLit, 'Menjaplom')
 provide(repoLit, 'Receptari')
 provide(branchLit, 'gh-pages')
 provide(commitMsgLit, 'Commit message')
 
+// DB anchor and setup
 //const db: Ref<DBConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
 const db: Ref<DBConnection> = ref(new MockDB())
 provide(dbLit, db)
+console.log('Loading db')
 db.value.connect('' + dbURLLit + dbNameLit)
+console.log('Loaded db')
+
 </script>
 
 <template>

@@ -1,94 +1,23 @@
 import type { Recipe } from "@/types/Recipe";
 import type { DBConnection } from "../dbInterface";
 import type { RecipeThumbnail } from "@/types/RecipeThumbnail";
-import { basicRecipe, compoundRecipe } from "./mockRecipes";
+import type { Tag } from "@/types/Tag"
+import { basicRecipe, boilerPlateRecipes, compoundRecipe } from "./mockRecipes";
+import { baseTags } from "./mockTypes";
 
 export class MockDB implements DBConnection {
     ready: boolean;
     recipeList: Array<Recipe>
+    tagList: Array<Tag>
 
     constructor() {
-    this.ready = false
-    this.recipeList = [{
-        id: 0,
-        title: "Recipe a",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 1,
-        title: "Recipe B",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 2,
-        title: "Recipe C",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 3,
-        title: "Recipe d",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 4,
-        title: "Recipe e",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 5,
-        title: "Recipe f",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      },{
-        id: 6,
-        title: "Recipe g",
-        media: [],
-        category: [],
-        yield:{},
-        tags: [],
-        tools: [],
-        ingredients:[],
-        directions: [],
-        components: []
-      }
-    ]
-
+        this.ready = false
+        this.recipeList = [
+            basicRecipe,
+            compoundRecipe,
+            ...boilerPlateRecipes
+        ]
+        this.tagList = baseTags
     }
 
     connect(_: string): Promise<void> {
@@ -119,15 +48,12 @@ export class MockDB implements DBConnection {
     }
 
     getRecipe(recipeId: number): Promise<Recipe> {
-      console.log(recipeId)
-      let recipe: Recipe;
-      if (recipeId === 0) {
-        recipe = compoundRecipe
-      }
-      else {
-        recipe = basicRecipe
-      }
-        return Promise.resolve(recipe)
+        console.log(recipeId)
+        const idx = this.recipeList.findIndex((r) => r.id === recipeId)
+        return Promise.resolve(this.recipeList[idx])
     }
 
+    getAllTags(): Promise<Tag[]> {
+        return Promise.resolve(this.tagList)
+    }
 }

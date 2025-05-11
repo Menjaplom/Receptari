@@ -9,7 +9,7 @@ const props = defineProps({
   n_id: Number
 })
 const id = props.parent_id + 'newDirectionList' + props.n_id
-const list = defineModel<Array<NewDirection>>('direction_list', { required: true  })
+const list = defineModel<Array<NewDirection>>('direction_list', { required: true })
 let counter = list.value.length
 
 // Draggable logic

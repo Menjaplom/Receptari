@@ -8,23 +8,24 @@ import ViewComponent from './ViewComponent.vue';
 
 
 const props = defineProps<{
-  id: number  // FIXME: it is currently being parsed as a string. Find how to recieve a number, or let it as string and parse it.
+  idStr: string
   title?: string
 }>()
 
+const id = Number(props.idStr)
 const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
-const pageId = `recipe_${props.id}_`
+const pageId = `recipe_${id}_`
 
-const recipe: Recipe = await db.value.getRecipe(props.id)
+const recipe: Recipe = await db.value.getRecipe(id)
 
 
-let selected = ref(0) // TODO: check if can be ommited by using a simple default prop with no emit capture
+//let selected = ref(0) // TODO: check if can be ommited by using a simple default prop with no emit capture
 </script>
 
 <template>
     <h1>{{ id }}</h1>
     <h2>{{ title ?? '' }}</h2>
-    <MediaCarrousel :id_start="pageId" :media_list="recipe.media" v-model:selected="selected"></MediaCarrousel>
+    <MediaCarrousel :id_start="pageId" :media_list="recipe.media" :selected="0"></MediaCarrousel>
     
     <div v-if="recipe.category">
       <h3>Category</h3>
@@ -85,6 +86,13 @@ let selected = ref(0) // TODO: check if can be ommited by using a simple default
       </div>
     </div>
 
+    <div v-if="recipe.components.length">
+      <h3>Components</h3>
+      <div v-for="c in recipe.components">
+        <p>{{ c.title }}</p>
+      </div>
+    </div>
+
     <div>
       <h3>Directions</h3>
       <div v-for="d,i in recipe.directions">
@@ -94,7 +102,6 @@ let selected = ref(0) // TODO: check if can be ommited by using a simple default
     </div>
 
     <div v-if="recipe.components.length">
-      <h3>Components</h3>
       <div v-for="c,i in recipe.components">
         <ViewComponent :recipe="c" :id="pageId+'_comp'+i"></ViewComponent>
       </div>

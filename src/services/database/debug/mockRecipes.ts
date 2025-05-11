@@ -41,7 +41,7 @@ export const basicRecipe: Recipe = {
 }
 
 export const compoundRecipe: Recipe = {
-    id: 0,
+    id: 1,
     title: 'Mocked Compound Recipe',
     media: [{
         url: '../../static/debug/recipeThumbnail.png',
@@ -134,3 +134,71 @@ export const compoundRecipe: Recipe = {
         components: []
     }]
 }
+
+export const boilerPlateRecipes= [{
+  id: 2,
+  title: "Recipe B",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+},{
+  id: 3,
+  title: "Recipe C",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+},{
+  id: 4,
+  title: "Recipe d",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+},{
+  id: 5,
+  title: "Recipe e",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+},{
+  id: 6,
+  title: "Recipe f",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+},{
+  id: 7,
+  title: "Recipe g",
+  media: [],
+  category: [],
+  yield:{},
+  tags: [],
+  tools: [],
+  ingredients:[],
+  directions: [],
+  components: []
+}]

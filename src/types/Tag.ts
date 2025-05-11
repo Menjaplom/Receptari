@@ -5,4 +5,4 @@ export const tagSchema = z.object({
   color:  z.string()
 })
 
-export type TagType = z.infer<typeof tagSchema>
+export type Tag = z.infer<typeof tagSchema>

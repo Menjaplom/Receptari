@@ -2,9 +2,9 @@ import { dbURLLit, defaultRecipeImg } from '@/literals'
 import { type DBConnection } from '../dbInterface'
 import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
-import type { Recipe } from '@/types/Recipe'
+import { emptyRecipe, type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
-import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails } from './tables/recipes'
+import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
 import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
 import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
 import { createTableRecipeTools, insertTools } from './tables/tools'
@@ -117,7 +117,9 @@ export class DBSqlite implements DBConnection {
     }
   }
 
-  getRecipe(recipeId: number): Promise<Recipe> {
-    throw new Error('Method not implemented.')
+  async getRecipe(recipeId: number): Promise<Recipe> {
+    let recipe = emptyRecipe
+    getRecipeBody(this.db!, recipeId, recipe)
+    return Promise.resolve(recipe)
   }
 }
