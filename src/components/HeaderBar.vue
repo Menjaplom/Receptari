@@ -10,11 +10,11 @@ let popupVisible = ref(false)
 let token = ref((localStorage.getItem('tokenReceptari') || '')!)
 console.log('token = ' + token.value)
 const loggedIn: Ref<boolean> = inject(loggedInLit) as Ref<boolean>
-;`checkToken()
+checkToken()
 
 // Function to check if a token is valid
 async function checkToken() {
-  try {
+  `try {
     const octokit = new Octokit({ auth: token.value })
     await octokit.request('GET /user')
     console.log('Token is valid.')
@@ -29,23 +29,23 @@ async function checkToken() {
       console.log('Invalid token.')
     }*/
     loggedIn.value = false
-  }
+  }`
 }
 
 function logOut() {
-  localStorage.removeItem('tokenReceptari')
-}`
+  //localStorage.removeItem('tokenReceptari')
+}
 </script>
 
 <template>
   <header>
     <nav>
       <ul>
-        <li><RouterLink to="/new">Add recipe</RouterLink></li>
+        <li><RouterLink :to="{ name: 'newRecipe' }">Add recipe</RouterLink></li>
         <li>Add component</li>
       </ul>
     </nav>
-    <h1><RouterLink to="/">Receptari</RouterLink></h1>
+    <h1><RouterLink :to="{ name: 'home' }">Receptari</RouterLink></h1>
     <span @click="(popupVisible = !popupVisible)">
       <img v-if="!loggedIn" class="not_login" src="./icons/not_login.png" />
       <img v-else class="not_login" src="./icons/ok.svg" />

@@ -5,7 +5,7 @@ import type { Tag } from '@/types/Tag'
 export interface DBConnection {
   ready: boolean
 
-  connect(dbName: string): Promise<void>
+  connect(): Promise<void>
 
   addRecipe(recipe: Recipe): Promise<RecipeThumbnail>
 
@@ -14,4 +14,6 @@ export interface DBConnection {
   getRecipe(recipeId: number): Promise<Recipe>
   
   getAllTags(): Promise<Tag[]>
+
+  getAllTools(): Promise<string[]>
 }

@@ -7,7 +7,7 @@ export const tableCategories = `Categories`
 export const tableRecipeCategory = `RecipeCategory`
 
 // Table creation literals
-export const createTableCategories =
+const createTableCategories =
   `CREATE TABLE IF NOT EXISTS ` + tableCategories + ` (
     category TEXT PRIMARY KEY
   ) STRICT;
@@ -21,7 +21,7 @@ export const createTableCategories =
     ('DRINK');
   `
 
-export const createTableRecipeCategory =
+const createTableRecipeCategory =
   `CREATE TABLE IF NOT EXISTS ` + tableRecipeCategory + ` (
     recipeId INTEGER,
     category TEXT,
@@ -30,6 +30,11 @@ export const createTableRecipeCategory =
     PRIMARY KEY (recipeId, category)
   ) STRICT`
 
+export function createTablesCategories(db: Database) {
+  db.run(createTableCategories)
+  db.run(createTableRecipeCategory)
+}
+ 
 // Table insertion literals
 const insertRecipeCategory =
   `INSERT INTO ` + tableRecipeCategory + `(recipeId, category) VALUES (
@@ -53,5 +58,23 @@ export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: n
   }
   finally {
     stmtRecipeCategory.free();
+  }
+}
+
+// Queries
+const selectRecipeCategories = 
+  `SELECT category FROM ` + tableRecipeCategory + ` WHERE recipeId = :id ORDER BY category ASC`
+
+export function getRecipeCategories(db: Database, recipeId: number, recipe: Recipe) {
+  const stmtRecCat = db.prepare(selectRecipeCategories)
+  try {
+    const result = stmtRecCat.getAsObject({':id': `${recipeId}`}) as unknown as string[]
+    recipe.category = result
+
+    //recipe.title = result[0].values
+    console.log('retrieved categories ' + JSON.stringify(result))
+  }
+  catch (e) {
+    throw new Error('Get recipe categories failed. Cause: ' + e)
   }
 }

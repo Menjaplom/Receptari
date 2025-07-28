@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { toolSchema, type Tool } from './Tool'
+import { NewTool, toolSchema, type Tool } from './Tool'
 import { tagSchema, type Tag } from './Tag'
 import { mediaSchema, NewMedia } from './Media'
 import { ingredientSchema, NewIngredient } from './Ingredient'
@@ -66,7 +66,7 @@ export class NewRecipe {
   yield: Yield
   prepTime?: string
   cookTime?: string
-  tools: Tool[]
+  tools: NewTool[]
   difficulty?: number
   ingredients: NewIngredient[]
   directions: NewDirection[]
@@ -82,7 +82,7 @@ export class NewRecipe {
     this.yield = recipe.yield
     this.prepTime = recipe.prepTime
     this.cookTime = recipe.cookTime
-    this.tools = recipe.tools
+    this.tools = recipe.tools.map((tool, idx) => new NewTool(tool, idx))
     this.difficulty = recipe.difficulty
     this.ingredients = recipe.ingredients.map((ingr, idx) => new NewIngredient(ingr, idx))
     this.directions = recipe.directions.map((dir, idx) => new NewDirection(dir, idx))
@@ -90,7 +90,6 @@ export class NewRecipe {
   }
 
   exportRecipe(): Recipe {
-    console.log('the damn ingredients' + JSON.stringify(this.ingredients))
     return {
       id: this.id,
       title: this.title,
@@ -101,7 +100,7 @@ export class NewRecipe {
       yield: this.yield,
       prepTime: this.prepTime,
       cookTime: this.cookTime,
-      tools: this.tools,
+      tools: this.tools.map((tool) => tool.exportTool()),
       ingredients: this.ingredients.map((ingr) => ingr.exportIngredient()),
       directions: this.directions.map((d) => d.exportDirection()),
       components: this.components.map((c) => c.exportRecipe())

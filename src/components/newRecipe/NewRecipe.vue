@@ -11,6 +11,7 @@ import router from '@/router'
 import { HSLToHexStr, newHSLPastel } from '@/utils/colors'
 import TagComp from '../tag/TagComp.vue'
 import NewTags from './NewTags.vue'
+import NewTools from './NewTools.vue'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -55,7 +56,7 @@ async function saveRecipe() {
 
   let saveRecipe = JSON.stringify(recipe.value.outputRecipe())*/
   let recipe: Recipe = newRecipe.value.exportRecipe()
-  console.log(JSON.stringify(recipe))
+  console.log('recipe to be saved' + JSON.stringify(recipe))
   db.value.addRecipe(recipe).then((thumbnail) => {
     console.log('Redirecting to Main page...')
     setTimeout(() => router.replace({path: '/', }), 100);
@@ -88,7 +89,6 @@ async function saveRecipe() {
   <div>
     <h3>Tags</h3>
     <NewTags v-model:new-tags="newRecipe.tags" />
-    {{JSON.stringify(newRecipe.tags)}}
   </div>
 
   <div>
@@ -114,7 +114,9 @@ async function saveRecipe() {
 
   <div>
     <h3>Tools</h3>
-    <input type="text" id="tools" name="tools" v-model="newRecipe.tools" />
+    <NewTools :parent_id="parent_id"
+          :n_id="0"
+          :tool_list="newRecipe.tools" />
   </div>
 
   <div id="components_selector" style="display: none">

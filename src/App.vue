@@ -27,11 +27,11 @@ provide(branchLit, 'gh-pages')
 provide(commitMsgLit, 'Commit message')
 
 // DB anchor and setup
-//const db: Ref<DBConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
-const db: Ref<DBConnection> = ref(new MockDB())
+const db: Ref<DBConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPUSES
+//const db: Ref<DBConnection> = ref(new MockDB())
 provide(dbLit, db)
 console.log('Loading db')
-db.value.connect('' + dbURLLit + dbNameLit)
+db.value.connect()
 console.log('Loaded db')
 
 </script>

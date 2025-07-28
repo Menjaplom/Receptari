@@ -17,7 +17,7 @@ const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
 const pageId = `recipe_${id}_`
 
 const recipe: Recipe = await db.value.getRecipe(id)
-
+console.log('view recipe value: ' + JSON.stringify(recipe))
 
 //let selected = ref(0) // TODO: check if can be ommited by using a simple default prop with no emit capture
 </script>

@@ -3,12 +3,13 @@ import type { DBConnection } from "../dbInterface";
 import type { RecipeThumbnail } from "@/types/RecipeThumbnail";
 import type { Tag } from "@/types/Tag"
 import { basicRecipe, boilerPlateRecipes, compoundRecipe } from "./mockRecipes";
-import { baseTags } from "./mockTypes";
+import { baseTags, baseTools } from "./mockTypes";
 
 export class MockDB implements DBConnection {
     ready: boolean;
     recipeList: Array<Recipe>
     tagList: Array<Tag>
+    toolList: Array<string>
 
     constructor() {
         this.ready = false
@@ -18,9 +19,10 @@ export class MockDB implements DBConnection {
             ...boilerPlateRecipes
         ]
         this.tagList = baseTags
+        this.toolList = baseTools
     }
 
-    connect(_: string): Promise<void> {
+    connect(): Promise<void> {
         this.ready = true
         return Promise.resolve()
     }
@@ -55,5 +57,9 @@ export class MockDB implements DBConnection {
 
     getAllTags(): Promise<Tag[]> {
         return Promise.resolve(this.tagList)
+    }
+
+    getAllTools(): Promise<string[]> {
+        return Promise.resolve(this.toolList)
     }
 }

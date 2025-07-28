@@ -1,16 +1,18 @@
-import { dbURLLit, defaultRecipeImg } from '@/literals'
+import { dbNameLit, dbURLLit, defaultRecipeImg } from '@/literals'
 import { type DBConnection } from '../dbInterface'
 import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
 import { emptyRecipe, type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
-import { createTableRecipes, createTableRecipeMedia, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
-import { createTableCategories, createTableRecipeCategory, insertRecipeCategories } from './tables/categories'
-import { createTableRecipeTags, createTableTags, insertTags } from './tables/tags'
-import { createTableRecipeTools, insertTools } from './tables/tools'
-import { createTableIngredients, createTableRecipeIngredients, insertIngredients } from './tables/ingredients'
-import { createTableDirectionMedia, createTableDirections, createTableRecipeDirections, insertDirections } from './tables/directions'
-import { createTableRecipeComponents, insertComponents } from './tables/components'
+import { createTablesRecipes, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
+import { createTablesCategories, getRecipeCategories, insertRecipeCategories } from './tables/categories'
+import { createTablesTags, getRecipeTags, insertTags } from './tables/tags'
+import { createTablesTools, getRecipeTools, insertTools } from './tables/tools'
+import { createTablesIngredients, getRecipeIngredients, insertIngredients } from './tables/ingredients'
+import { createTablesDirections, getRecipeDirections, insertDirections } from './tables/directions'
+import { createTablesComponents, getRecipeComponents, insertComponents } from './tables/components'
+import type { Tag } from '@/types/Tag'
+import { basicRecipe } from '../debug/mockRecipes'
 
 export class DBSqlite implements DBConnection {
   ready: boolean
@@ -19,14 +21,15 @@ export class DBSqlite implements DBConnection {
   constructor() {
     this.ready = false
   }
-  async connect(dbName: string): Promise<void> {
+
+  async connect(): Promise<void> {
     const sqlPromise = initSqlJs({ locateFile: (_) => '/node_modules/sql.js/dist/sql-wasm.wasm' })
     console.log('Wasm promised')
     let fetchGoing = true
     
     let fetchPromise
     try {
-      fetchPromise = fetch(dbURLLit).then(r => {
+      fetchPromise = fetch(dbURLLit + dbNameLit).then(r => {
         if(JSON.stringify(r) == '{}') {
           return { response: undefined, going: false }
         }
@@ -43,42 +46,23 @@ export class DBSqlite implements DBConnection {
     console.log(`fetchGoing ${fetchResponse.going}`)
     console.log(`fetchResponse ${fetchResponse.response?.ok}`)
     if (!fetchGoing || !fetchResponse.response?.ok) {
+      console.log('Creating new DB')
       this.db = new SQL.Database()
-      
-      console.log(createTableRecipes)
-      this.db.run(createTableRecipes)
-      console.log('Table Recipes created.')
-      this.db.run(createTableRecipeMedia)
-      console.log('Table RecipeMedia created.')
-      this.db.run(createTableCategories)
-      console.log('Table Categories created.')
-      this.db.run(createTableRecipeCategory)
-      console.log('Table RecipeCategory created.')
-      this.db.run(createTableTags)
-      console.log('Table TableTags created.')
-      this.db.run(createTableRecipeTags)
-      console.log('Table RecipeTags created.')
-      this.db.run(createTableRecipeTools)
-      console.log('Table RecipeTools created.')
-      this.db.run(createTableIngredients)
-      console.log('Table Ingredients created.')
-      this.db.run(createTableRecipeIngredients)
-      console.log('Table RecipeIngredients created.')
-      this.db.run(createTableDirections)
-      console.log('Table Directions created.')
-      this.db.run(createTableRecipeDirections)
-      console.log('Table RecipeDirections created.')
-      this.db.run(createTableDirectionMedia)
-      console.log('Table DirectionMedia created.')
-      this.db.run(createTableRecipeComponents)
-      console.log('Table RecipeComponents created.')
+      createTablesRecipes(this.db)
+      createTablesCategories(this.db)
+      createTablesTags(this.db)
+      createTablesTools(this.db)
+      createTablesIngredients(this.db)
+      createTablesDirections(this.db)
+      createTablesComponents(this.db)
       this.ready = true
+      console.log('New DB created')
     } else {
       const dbArr = await fetchResponse.response.arrayBuffer().then((arr) => new Uint8Array(arr))
       this.db = new SQL.Database(dbArr)
       this.ready = true
     }
-
+    this.addRecipe(basicRecipe) //! DEBUG
     return Promise.resolve()
   }
 
@@ -118,8 +102,32 @@ export class DBSqlite implements DBConnection {
   }
 
   async getRecipe(recipeId: number): Promise<Recipe> {
+    if (!this.db) {
+      throw Error('DB not initialized')
+    }
     let recipe = emptyRecipe
-    getRecipeBody(this.db!, recipeId, recipe)
+    getRecipeBody(this.db, recipeId, recipe)
+    getRecipeCategories(this.db, recipeId, recipe)
+    getRecipeTags(this.db, recipeId, recipe)
+    getRecipeTools(this.db, recipeId, recipe)
+    getRecipeIngredients(this.db, recipeId, recipe)
+    getRecipeDirections(this.db, recipeId, recipe)
+    let componentIds = getRecipeComponents(this.db, recipeId)
+    for (let compId of componentIds) {
+      recipe.components.push(await this.getRecipe(compId))
+    }
+    
+    console.log(JSON.stringify(recipe))
     return Promise.resolve(recipe)
+  }
+
+  getAllTags(): Promise<Tag[]> {
+    console.log('Method not implemented.')
+    return Promise.resolve([] as Tag[])
+  }
+
+  getAllTools(): Promise<string[]> {
+    console.log('Method not implemented.')
+    return Promise.resolve([] as string[])
   }
 }

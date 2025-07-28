@@ -61,7 +61,7 @@ function removeIngredient(dragId: number) {
         <span>: </span>
         <input type="number" placeholder="unitats* (opcional)" v-model="element.units" />
         <input type="text" placeholder="mesura** (opcional)" v-model="element.measure" />
-        <button @click="removeIngredient(element.key)">X</button>
+        <button @click="removeIngredient(element.dragId)">X</button>
         {{ element }}
       </li>
     </template>

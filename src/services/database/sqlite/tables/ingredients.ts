@@ -1,18 +1,19 @@
 import type { Database } from "sql.js"
 import { tableRecipes } from "./recipes"
 import type { Recipe } from "@/types/Recipe"
+import type { Ingredient } from "@/types/Ingredient"
 
 // Table names
 export const tableIngredients = `Ingredients`
 export const tableRecipeIngredients = `RecipeIngredients`
 
 // Table creation literals
-export const createTableIngredients =
+const createTableIngredients =
   `CREATE TABLE IF NOT EXISTS ` + tableIngredients + ` (
     name TEXT PRIMARY KEY
   ) STRICT`
 
-export const createTableRecipeIngredients =
+const createTableRecipeIngredients =
   `CREATE TABLE IF NOT EXISTS ` + tableRecipeIngredients + ` (
     recipeId INTEGER,
     ingredient text,
@@ -23,6 +24,11 @@ export const createTableRecipeIngredients =
     FOREIGN KEY (ingredient) REFERENCES ` + tableIngredients + `(name),
     PRIMARY KEY (recipeId, ingredient)
   ) STRICT`
+
+export function createTablesIngredients(db: Database) {
+  db.run(createTableIngredients)
+  db.run(createTableRecipeIngredients)
+}
 
 // Table insertion literals
 const insertIngredient = 
@@ -59,10 +65,30 @@ export function insertIngredients(db: Database, recipe: Recipe, recipeId: number
     });
   }
   catch (e) {
-    throw new Error('Recipe ingredient insertion failed. Cause: ' + e)
+    throw new Error('Recipe ingredient insertion failed. Cause: ' + e);
   }
   finally {
     stmtIngredient.free();
     stmtRecipeIngredient.free();
+  }
+}
+
+// Queries
+const selectRecipeIngredients = 
+  `SELECT ingredient, units, measure FROM ${createTableRecipeIngredients}
+   WHERE recipeId = :id
+   ORDER BY position ASC`
+
+export function getRecipeIngredients(db: Database, recipeId: number, recipe: Recipe) {
+  const stmtRecTag = db.prepare(selectRecipeIngredients)
+  try {
+    const result = stmtRecTag.getAsObject({':id': `${recipeId}`}) as unknown as Ingredient[]
+    recipe.ingredients = result
+
+    //recipe.title = result[0].values
+    console.log('retrieved ingredients ' + JSON.stringify(result))
+  }
+  catch (e) {
+    throw new Error('Get recipe ingredients failed. Cause: ' + e)
   }
 }
