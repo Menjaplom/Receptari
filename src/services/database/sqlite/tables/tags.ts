@@ -72,6 +72,10 @@ const selectRecipeTags =
    WHERE t2.recipeId = :id AND t2.tag = t1.tag
    ORDER BY t1.tag ASC`
 
+const selectAllTags =
+  `SELECT * FROM ${tableTags}
+   ORDER BY tag ASC`
+
 export function getRecipeTags(db: Database, recipeId: number, recipe: Recipe) {
   const stmtRecTag = db.prepare(selectRecipeTags)
   try {
@@ -83,5 +87,19 @@ export function getRecipeTags(db: Database, recipeId: number, recipe: Recipe) {
   }
   catch (e) {
     throw new Error('Get recipe tags failed. Cause: ' + e)
+  }
+}
+
+export function getTags(db: Database): Tag[] {
+  const stmtTags = db.prepare(selectRecipeTags)
+  try {
+    const result = stmtTags.getAsObject() as unknown as Tag[]
+
+    //recipe.title = result[0].values
+    console.log('retrieved all tags ' + JSON.stringify(result))
+    return result
+  }
+  catch (e) {
+    throw new Error('Get all tags failed. Cause: ' + e)
   }
 }
