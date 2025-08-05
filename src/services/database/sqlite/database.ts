@@ -6,7 +6,7 @@ import { emptyRecipe, type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import { createTablesRecipes, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
 import { createTablesCategories, getRecipeCategories, insertRecipeCategories } from './tables/categories'
-import { createTablesTags, getRecipeTags, insertTags } from './tables/tags'
+import { createTablesTags, getRecipeTags, getTags, insertTags } from './tables/tags'
 import { createTablesTools, getRecipeTools, insertTools } from './tables/tools'
 import { createTablesIngredients, getRecipeIngredients, insertIngredients } from './tables/ingredients'
 import { createTablesDirections, getRecipeDirections, insertDirections } from './tables/directions'
@@ -122,8 +122,7 @@ export class DBSqlite implements DBConnection {
   }
 
   getAllTags(): Promise<Tag[]> {
-    console.log('Method not implemented.')
-    return Promise.resolve([] as Tag[])
+    return Promise.resolve(getTags(this.db!))
   }
 
   getAllTools(): Promise<string[]> {

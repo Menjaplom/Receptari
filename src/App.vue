@@ -37,6 +37,7 @@ console.log('Loaded db')
 </script>
 
 <template>
+   <v-app>
   <!--<nav>
     <RouterLink to="/">Go to Home</RouterLink>
     <RouterLink to="/new">Go to new recipe</RouterLink>
@@ -59,6 +60,7 @@ console.log('Loaded db')
       </template>
     </RouterView>
   </main>
+  </v-app>
 </template>
 
 <!-- 

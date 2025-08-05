@@ -14,16 +14,19 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@mdi/js": "^7.4.47",
     "octokit": "^4.1.0",
     "sql.js": "^1.12.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vuedraggable": "^4.1.0",
+    "vuetify": "^3.9.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.5",
     "@tsconfig/node20": "^20.1.4",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.13.0",
     "@types/sql.js": "^1.4.9",
     "@vitejs/plugin-vue": "^5.2.1",
@@ -32,6 +35,7 @@
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.19.0",
     "eslint-plugin-vue": "^9.32.0",
+    "mocha": "^11.6.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.4.2",
     "typescript": "~5.7.3",
