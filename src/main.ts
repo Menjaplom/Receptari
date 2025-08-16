@@ -5,6 +5,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { VFileUpload } from 'vuetify/labs/VFileUpload'
 
 // Icons
 //
@@ -16,7 +17,10 @@ import App from './App.vue'
 import router from './router'
 
 const vuetify = createVuetify({
-  components,
+  components: {
+    ...components,
+    VFileUpload
+  },
   directives, 
   theme: {
     defaultTheme: 'system',

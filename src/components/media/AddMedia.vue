@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
-import { ref, computed } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import MediaCarrousel from './MediaCarrousel.vue'
 import { NewMedia, type Media } from '../../types/Media'
 import { repoUrlLit } from '@/literals'
@@ -10,8 +10,10 @@ const props = defineProps({
   n_id: Number,
   add_but_msg: String
 })
+
 const newMediaList = defineModel<Array<NewMedia>>('new_media_list', { required: true  })
-/*let newMediaList: Ref<Array<NewMedia>> = ref( mediaList.value.map((media, idx) => {
+const newMediaFiles: Ref<File[]> = ref([]) // todo: shallowRef
+  /*let newMediaList: Ref<Array<NewMedia>> = ref( mediaList.value.map((media, idx) => {
   return {
     ...media,
     'order': idx,
@@ -19,7 +21,7 @@ const newMediaList = defineModel<Array<NewMedia>>('new_media_list', { required: 
     'file': undefined
   }
 }))*/
-let counter = newMediaList.value.length
+let nextDragId = newMediaList.value.length
 const id = props.parent_id + 'addMedia' + props.n_id
 
 // Draggable logic
@@ -32,6 +34,7 @@ const dragOptions = computed(() => {
     ghostClass: 'ghost'
   }
 })
+
 // Carrousel input logic
 let selected = ref(0)
 const mediaList = computed(() => {
@@ -78,19 +81,29 @@ function removeFile(id: number) {
     }
   }
 }
+
+function appendNewMediaFile(mediaFiles: File[]) {
+  for (let file of mediaFiles) {
+    console.log("file name " + file.name)
+    const newUrl = repoUrlLit + '/' //TODO: PROGRAM VALID URL
+    const auxUrl = URL.createObjectURL(file)
+    
+    console.log("medialist is result: " + newMediaList.value.find((v) => v.url == newUrl) )
+    if (newMediaList.value.find((v) => v.urlAux == auxUrl) === undefined) { // TODO: clear the undefined to just !
+      console.log("still going " + file.name)
+      let auxMed = new NewMedia({'url': newUrl}, nextDragId++)
+      auxMed.urlAux = auxUrl
+      auxMed.file = file
+      newMediaList.value.push(auxMed)
+    }
+  }
+}
 </script>
 
 <template>
-  <label :for="id + '_add_button'" class="addImage">{{add_but_msg}}</label>
-  <input
-    type="file"
-    :id="id + '_add_button'"
-    :name="id + '_add_button'"
-    accept=".jpg, .jpeg, .png"
-    multiple
-    v-on:change="onFileChange($event)"
-    hidden
-  />
+  <v-file-upload v-model="newMediaFiles" clearable multiple show-size @update:modelValue="appendNewMediaFile">
+    <template v-slot:item="{props: itemProps }"/>
+  </v-file-upload>
   <draggable
     class="list-group"
     tag="ul"
@@ -108,11 +121,15 @@ function removeFile(id: number) {
   >
     <template #item="{ element }">
       <li class="list-group-item">
-        <span :class="{ bold: element.dragId === newMediaList[selected].dragId }">{{
+          <span :class="{ bold: element.dragId === newMediaList[selected].dragId }">{{
           element.file.name
         }}</span>
         <button @click="removeFile(element.dragId)">X</button>
       </li>
+
+      <!--<li class="list-group-item">
+        
+      </li>-->
     </template>
   </draggable>
   <MediaCarrousel :id_start="id" :media_list="mediaList" v-model:selected="selected" />

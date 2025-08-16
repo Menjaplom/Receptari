@@ -20,7 +20,7 @@ await checkDBstate()
 </script>
 
 <template>
-  <h1>Recive list: main view</h1>
+  <!--<h1>Recive list: main view</h1>
   <h2 v-if="thumbnails.length < 1">No recipes. Please insert one</h2>
   <section class="cards" v-else>
     <article class="card" v-for="thumbnail in thumbnails" :key="thumbnail.id">
@@ -33,7 +33,25 @@ await checkDBstate()
         <p>{{ thumbnail.title }}</p>
       </RouterLink>
     </article>
-  </section>
+  </section>-->
+  <v-container fluid>
+    <v-row dense>
+      <v-col v-for="card in thumbnails" :key="card.id" :cols="6">
+        <v-card>
+          <v-img
+            :src="card.media"
+            class="align-end"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+            height="200px"
+            cover
+          >
+            <v-icon icon="$vuetify" class="align-right"></v-icon>
+          </v-img>
+          <v-card-title v-text="card.title"></v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped>

@@ -7,11 +7,13 @@ import { emit } from 'process';
 import { inject, ref, type Ref } from 'vue';
 import TagComp from '../tag/TagComp.vue';
 import AutoComplete from '../misc/AutoComplete.vue';
+import { json } from 'stream/consumers';
 
 let newTags = defineModel<Array<Tag>>('newTags', { required: true })
 
 const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
 const tagSugestionList = await db.value.getAllTags()
+console.log('tag suggestion list ' + JSON.stringify(tagSugestionList))
 const tagSugNameList = tagSugestionList.map((sug) => sug.tag)
 
 const currTag = ref('')

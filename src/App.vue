@@ -37,29 +37,24 @@ console.log('Loaded db')
 </script>
 
 <template>
-   <v-app>
-  <!--<nav>
-    <RouterLink to="/">Go to Home</RouterLink>
-    <RouterLink to="/new">Go to new recipe</RouterLink>
-  </nav>-->
+  <v-app>
+    <v-layout>
+      <nav><HeaderBar /></nav>
 
-  <HeaderBar />
+      <v-main>
+        <RouterView v-slot="{ Component }">
+          <template v-if="Component">
+            <Suspense>
+              <!-- main content -->
+              <component :is="Component"></component>
 
-  <main>
-    <RouterView v-slot="{ Component }">
-      <template v-if="Component">
-        <Suspense>
-          <!-- main content -->
-          <component :is="Component"></component>
-
-          <!-- loading state -->
-          <template #fallback>
-            Loading...
+              <!-- loading state -->
+              <template #fallback> Loading... </template>
+            </Suspense>
           </template>
-        </Suspense>
-      </template>
-    </RouterView>
-  </main>
+        </RouterView>
+      </v-main>
+    </v-layout>
   </v-app>
 </template>
 
