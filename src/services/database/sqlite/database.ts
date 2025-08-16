@@ -121,12 +121,14 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve(recipe)
   }
 
-  getAllTags(): Promise<Tag[]> {
-    console.log('Method not implemented.')
-    return Promise.resolve([] as Tag[])
+  async getAllTags(): Promise<Tag[]> {
+    if (!this.db) {
+      await this.connect()
+    }
+    return Promise.resolve(getTags(this.db!))
   }
 
-  getAllTools(): Promise<string[]> {
+  async getAllTools(): Promise<string[]> {
     console.log('Method not implemented.')
     return Promise.resolve([] as string[])
   }
