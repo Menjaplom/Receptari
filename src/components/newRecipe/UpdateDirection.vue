@@ -74,14 +74,7 @@ function removeDirection(dragId: number) {
 </template>
 
 <style>
-.handle {
-  float: left;
-  padding: 8px;
-  background-image: url(../icons/drag-handle.svg);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
+
 
 .addImage {
   padding: 8px;

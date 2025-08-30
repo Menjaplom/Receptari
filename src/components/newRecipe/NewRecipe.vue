@@ -96,7 +96,7 @@ function required (v) {
 
     <div>
       <h3>Tags</h3>
-      <NewTags v-model:new-tags="newRecipe.tags" />
+      <!--<NewTags v-model:new-tags="newRecipe.tags" />-->
     </div>
 
     <div>

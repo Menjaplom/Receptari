@@ -23,7 +23,7 @@ const vuetify = createVuetify({
   },
   directives, 
   theme: {
-    defaultTheme: 'system',
+    defaultTheme: 'light',//'system',
   },
   icons: {
     defaultSet: 'mdi',
