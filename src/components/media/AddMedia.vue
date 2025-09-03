@@ -153,6 +153,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
   </draggable>
 
   <v-carousel
+    v-if="!!newMediaList.length"
     v-model="selected"
     height="400"
   >

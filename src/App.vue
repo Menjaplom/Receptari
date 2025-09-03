@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeaderBar from './components/HeaderBar.vue'
-import { ref, provide } from 'vue'
+import { ref, provide, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import {
   loggedInLit,
@@ -31,9 +31,12 @@ const db: Ref<DBConnection> = ref(new DBSqlite()) // COMMENTED DUE TESTING PORPU
 //const db: Ref<DBConnection> = ref(new MockDB())
 provide(dbLit, db)
 console.log('Loading db')
-db.value.connect()
+
 console.log('Loaded db')
 
+onMounted(async () => {
+    await db.value.connect()// this won't work.
+})
 </script>
 
 <template>

@@ -5,7 +5,7 @@ import * as sharedLit from './sharedLiterals'
 import { emptyRecipe, type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import { createTablesRecipes, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
-import { createTablesCategories, getRecipeCategories, insertRecipeCategories } from './tables/categories'
+import { createTablesCategories, getCategories, getRecipeCategories, insertRecipeCategories } from './tables/categories'
 import { createTablesTags, getRecipeTags, getTags, insertTags } from './tables/tags'
 import { createTablesTools, getRecipeTools, insertTools } from './tables/tools'
 import { createTablesIngredients, getRecipeIngredients, insertIngredients } from './tables/ingredients'
@@ -66,6 +66,15 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve()
   }
 
+  async waitForConnection(): Promise<void> {
+    const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+    
+    while (!this.ready) {
+      console.log('Waiting for db to be ready...')
+      await delay(100)
+    }
+  }
+
   async addRecipe(recipe: Recipe): Promise<RecipeThumbnail> {
     if (!this.ready) return Promise.reject('addRecipe: DB not ready')
     this.db!.run(sharedLit.beginTransaction)
@@ -120,6 +129,11 @@ export class DBSqlite implements DBConnection {
     console.log(JSON.stringify(recipe))
     return Promise.resolve(recipe)
   }
+
+  getAllCategories(): Promise<string[]> {
+    return Promise.resolve(getCategories(this.db!))
+  }
+
 
   getAllTags(): Promise<Tag[]> {
     return Promise.resolve(getTags(this.db!))

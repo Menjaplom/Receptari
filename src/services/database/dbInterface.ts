@@ -7,12 +7,16 @@ export interface DBConnection {
 
   connect(): Promise<void>
 
+  waitForConnection(): Promise<void>
+
   addRecipe(recipe: Recipe): Promise<RecipeThumbnail>
 
   listAllRecipes(): Promise<Array<RecipeThumbnail>>
 
   getRecipe(recipeId: number): Promise<Recipe>
   
+  getAllCategories(): Promise<string[]>
+
   getAllTags(): Promise<Tag[]>
 
   getAllTools(): Promise<string[]>

@@ -2,20 +2,17 @@
 import { dbLit } from '@/literals';
 import type { DBConnection } from '@/services/database/dbInterface';
 import { type RecipeThumbnail } from '@/types/RecipeThumbnail';
-import { inject, ref, type Ref } from 'vue'
+import { inject, onMounted, ref, type Ref } from 'vue'
 
 const db = inject(dbLit) as Ref<DBConnection>
 let thumbnails: Ref<Array<RecipeThumbnail>> = ref([])
-async function checkDBstate() {
-  if (!db.value.ready) {
-    console.log('RecipeList.vue: Waiting for db to be ready...')
-    setTimeout(() => checkDBstate(), 100);
-  }
-  else {
+  
+onMounted(async () => {
+    await db.value.waitForConnection()
     thumbnails.value = await db.value.listAllRecipes()
-  }
-}
-await checkDBstate()
+})
+
+
 //let thumbnails: Array<RecipeThumbnail> = await db.value.listAllRecipes()
 </script>
 

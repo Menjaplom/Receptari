@@ -65,6 +65,9 @@ export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: n
 const selectRecipeCategories = 
   `SELECT category FROM ` + tableRecipeCategory + ` WHERE recipeId = :id ORDER BY category ASC`
 
+const selectCategories = 
+  `SELECT * FROM ` + tableCategories + ` ORDER BY category ASC`
+
 export function getRecipeCategories(db: Database, recipeId: number, recipe: Recipe) {
   const stmtRecCat = db.prepare(selectRecipeCategories)
   try {
@@ -76,5 +79,19 @@ export function getRecipeCategories(db: Database, recipeId: number, recipe: Reci
   }
   catch (e) {
     throw new Error('Get recipe categories failed. Cause: ' + e)
+  }
+}
+
+export function getCategories(db: Database) {
+  const stmtCat = db.prepare(selectCategories)
+  try {
+    const result = stmtCat.getAsObject() as unknown as string[]
+    //recipe.title = result[0].values
+    console.log('all categories ' + JSON.stringify(result))
+    return result
+
+  }
+  catch (e) {
+    throw new Error('Get all categories failed. Cause: ' + e)
   }
 }

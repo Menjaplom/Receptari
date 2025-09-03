@@ -21,18 +21,18 @@ const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
 const props = defineProps<{
   recipe: Recipe | null
 }>()
-const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
-//let test_recipe: Recipe = props.recipe
 let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe?? emptyRecipe))
-/*fetch('/static/recipes/braç_de_gitano_de_crema/Braç_de_gitano_de_crema.json')
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data)
-    test_recipe = recipeSchema.parse(data)
-    console.log(test_recipe)
-    recipe.value = new recipe(test_recipe)
-  })
-  .catch((error) => console.error('Error loading JSON file', error))*/
+const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
+await db.value.waitForConnection()
+
+const allCategories = await db.value.getAllCategories()
+console.log('all categories')
+console.log(allCategories)
+const allTags = await db.value.getAllTags()
+
+let selectedCategories = ref(newRecipe.value.category
+  .map((cat) => allCategories.findIndex((c)=> c===cat))
+  .filter((c)=> c !== -1))
 
 let savePopped: Ref<boolean> = ref(false)
 
@@ -86,12 +86,23 @@ function required (v) {
 
     <div>
       <h3>Description</h3>
-      <input type="text" id="title" name="title" v-model="newRecipe.title" />
+      <v-text-field v-model="newRecipe.description" placeholder="Description" hint="Informació sobre la recepta" clearable></v-text-field>
     </div>  
 
     <div>
       <h3>Categories</h3>
-      <input type="text" id="categories" name="categories" v-model="newRecipe.category[0]" />
+      <v-chip-group
+        selected-class="text-primary"
+        v-model="selectedCategories"
+        multiple
+      >
+        <v-chip
+          v-for="cat in allCategories"
+          :key="cat"
+          :text="cat"
+          
+        ></v-chip>
+      </v-chip-group>
     </div>
 
     <div>
