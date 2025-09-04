@@ -68,7 +68,7 @@ export class DBSqlite implements DBConnection {
 
   async waitForConnection(): Promise<void> {
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
-    
+
     while (!this.ready) {
       console.log('Waiting for db to be ready...')
       await delay(100)

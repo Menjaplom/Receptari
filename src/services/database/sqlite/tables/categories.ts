@@ -8,10 +8,10 @@ export const tableRecipeCategory = `RecipeCategory`
 
 // Table creation literals
 const createTableCategories =
-  `CREATE TABLE IF NOT EXISTS ` + tableCategories + ` (
+  `CREATE TABLE IF NOT EXISTS ${tableCategories} (
     category TEXT PRIMARY KEY
   ) STRICT;
-  INSERT INTO ` + tableCategories + ` VALUES
+  INSERT INTO ${tableCategories} (category) VALUES
     ('APPETIZER'),
     ('SOUP'),
     ('SALAD'),
@@ -22,11 +22,11 @@ const createTableCategories =
   `
 
 const createTableRecipeCategory =
-  `CREATE TABLE IF NOT EXISTS ` + tableRecipeCategory + ` (
+  `CREATE TABLE IF NOT EXISTS ${tableRecipeCategory} (
     recipeId INTEGER,
     category TEXT,
-    FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id),
-    FOREIGN KEY (category) REFERENCES ` + tableCategories + `(category),
+    FOREIGN KEY (recipeId) REFERENCES ${tableRecipes}(id),
+    FOREIGN KEY (category) REFERENCES ${tableCategories}(category),
     PRIMARY KEY (recipeId, category)
   ) STRICT`
 
@@ -37,7 +37,7 @@ export function createTablesCategories(db: Database) {
  
 // Table insertion literals
 const insertRecipeCategory =
-  `INSERT INTO ` + tableRecipeCategory + `(recipeId, category) VALUES (
+  `INSERT INTO ${tableRecipeCategory}(recipeId, category) VALUES (
     :recipeId,
     :category
   )`
@@ -63,10 +63,10 @@ export function insertRecipeCategories(db: Database, recipe: Recipe, recipeId: n
 
 // Queries
 const selectRecipeCategories = 
-  `SELECT category FROM ` + tableRecipeCategory + ` WHERE recipeId = :id ORDER BY category ASC`
+  `SELECT category FROM ${tableRecipeCategory} WHERE recipeId = :id ORDER BY category ASC`
 
 const selectCategories = 
-  `SELECT * FROM ` + tableCategories + ` ORDER BY category ASC`
+  `SELECT * FROM ${tableCategories} ORDER BY category ASC`
 
 export function getRecipeCategories(db: Database, recipeId: number, recipe: Recipe) {
   const stmtRecCat = db.prepare(selectRecipeCategories)
@@ -83,11 +83,9 @@ export function getRecipeCategories(db: Database, recipeId: number, recipe: Reci
 }
 
 export function getCategories(db: Database) {
-  const stmtCat = db.prepare(selectCategories)
   try {
-    const result = stmtCat.getAsObject() as unknown as string[]
-    //recipe.title = result[0].values
-    console.log('all categories ' + JSON.stringify(result))
+    const result = db.exec(selectCategories)[0].values.flat() as string[]
+    //console.log('all categories ' + JSON.stringify(result))
     return result
 
   }

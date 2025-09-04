@@ -14,6 +14,7 @@ import NewTags from './NewTags.vue'
 import NewTools from './NewTools.vue'
 import RecipeWrapper from '../misc/RecipeWrapper.vue'
 import AddMedia from '../media/AddMedia.vue'
+import CategorySelection from './CategorySelection.vue'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -65,7 +66,7 @@ async function saveRecipe() {
 
 }
 
-function required (v) {
+function required (v: any) {
   return !!v || 'Field is required'
 }
 
@@ -91,18 +92,8 @@ function required (v) {
 
     <div>
       <h3>Categories</h3>
-      <v-chip-group
-        selected-class="text-primary"
-        v-model="selectedCategories"
-        multiple
-      >
-        <v-chip
-          v-for="cat in allCategories"
-          :key="cat"
-          :text="cat"
-          
-        ></v-chip>
-      </v-chip-group>
+      <CategorySelection v-model:categories="newRecipe.category"/>
+      <p>{{ JSON.stringify(newRecipe.category) }}</p>
     </div>
 
     <div>
