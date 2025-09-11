@@ -15,6 +15,7 @@ import NewTools from './NewTools.vue'
 import RecipeWrapper from '../misc/RecipeWrapper.vue'
 import AddMedia from '../media/AddMedia.vue'
 import CategorySelection from './CategorySelection.vue'
+import DifficultySelector from './DifficultySelector.vue'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -111,23 +112,24 @@ function required (v: any) {
 
     <div>
       <h3>Recipe yield</h3>
-      <input type="number" id="yield_units" name="yield_units" v-model="newRecipe.yield.units" />
-      <input type="text" id="yield_measure" name="yield_measure" v-model="newRecipe.yield.measure" />
+      
+      <v-text-field v-model="newRecipe.yield.units" placeholder="units" hint="number of portions" type="number" clearable></v-text-field>
+      <v-text-field v-model="newRecipe.yield.measure" placeholder="measure" hint="measure units describing the portions" type="text" clearable></v-text-field>
     </div>
 
     <div>
       <h3>Preparation time</h3>
-      <input type="text" id="prep_time" name="prep_time" v-model="newRecipe.prepTime" />
+      <v-text-field v-model="newRecipe.prepTime" placeholder="1 hour..." hint="Total time needed to complete the recipe start to finish" type="text" clearable></v-text-field>
     </div>
 
     <div>
       <h3>Cook time</h3>
-      <input type="text" id="cook_time" name="cook_time" v-model="newRecipe.cookTime" />
+      <v-text-field v-model="newRecipe.cookTime" placeholder="1 hour..." hint="Time spent actively cooking" type="text" clearable></v-text-field>
     </div>
 
     <div>
       <h3>Difficulty</h3>
-      <input type="number" id="difficulty" name="difficulty" v-model="newRecipe.difficulty" />
+      <DifficultySelector v-model:difficulty="newRecipe.difficulty"/>
     </div>
 
     <div>
