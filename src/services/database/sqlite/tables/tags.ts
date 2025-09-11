@@ -91,13 +91,11 @@ export function getRecipeTags(db: Database, recipeId: number, recipe: Recipe) {
 }
 
 export function getTags(db: Database): Tag[] {
-  const stmtTags = db.prepare(selectRecipeTags)
+  const stmtTags = db.prepare(selectAllTags)
   try {
-    const result = stmtTags.getAsObject() as unknown as Tag[]
-
-    //recipe.title = result[0].values
-    console.log('retrieved all tags ' + JSON.stringify(result))
-    return result
+    const result = stmtTags.getAsObject()
+    console.log('retrieved all tags ' + JSON.stringify(result.values))
+    return result.values as unknown as Tag[] ?? [] as Tag[]
   }
   catch (e) {
     throw new Error('Get all tags failed. Cause: ' + e)

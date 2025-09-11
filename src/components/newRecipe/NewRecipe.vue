@@ -93,12 +93,20 @@ function required (v: any) {
     <div>
       <h3>Categories</h3>
       <CategorySelection v-model:categories="newRecipe.category"/>
-      <p>{{ JSON.stringify(newRecipe.category) }}</p>
     </div>
 
     <div>
       <h3>Tags</h3>
       <!--<NewTags v-model:new-tags="newRecipe.tags" />-->
+      <Suspense>
+        <!-- component with nested async dependencies -->
+        <NewTags v-model:new-tags="newRecipe.tags"/>
+
+        <!-- loading state via #fallback slot -->
+        <template #fallback>
+          Loading tags...
+        </template>
+      </Suspense>
     </div>
 
     <div>
