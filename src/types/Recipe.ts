@@ -16,7 +16,7 @@ export const recipeBaseSchema = z.object({
   yield: yieldSchema,
   prepTime: z.string().optional(),
   cookTime: z.string().optional(),
-  tools:z.array(toolSchema),
+  tools: z.array(toolSchema),
   difficulty: z.number().optional(),
   ingredients: z.array(ingredientSchema),
   directions: z.array(directionSchema)
@@ -30,15 +30,15 @@ export const recipeSchema: z.ZodType<Recipe> = recipeBaseSchema.extend({
   components: z.lazy(() => recipeSchema.array())
 })
 
-export const emptyRecipe: Recipe =  {
+export const emptyRecipe: Recipe = {
   id: -1,
-  title: "",
+  title: '',
   media: [],
   category: [],
   tags: [],
   yield: {},
   tools: [],
-  ingredients:[],
+  ingredients: [{ name: 'a', units: 0, measure: 'x' }],
   directions: [],
   components: []
 }
@@ -72,7 +72,7 @@ export class NewRecipe {
   directions: NewDirection[]
   components: NewRecipe[]
 
-  constructor(recipe: Recipe){
+  constructor(recipe: Recipe) {
     this.id = recipe.id
     this.title = recipe.title
     this.media = recipe.media.map((m, idx) => new NewMedia(m, idx))
