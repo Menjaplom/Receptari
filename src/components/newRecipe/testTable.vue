@@ -2,6 +2,7 @@
 import draggable from 'vuedraggable'
 import { computed, ref } from 'vue'
 import DataTableRowHandler from './DataTableRowHandler.vue'
+import { mdiDragHorizontalVariant } from '@mdi/js'
 
 const allowDrag = ref(true)
 const selected = ref(
@@ -16,7 +17,7 @@ const selected = ref(
   }[]
 )
 const headers = ref([
-  { text: 'Lock', value: 'lock', width: '50px', sortable: false },
+  { text: '', value: 'handle', width: '50px', sortable: false },
   {
     text: 'Dessert (100g serving)',
     align: 'start',
@@ -162,9 +163,17 @@ let onMoveCallback = (evt, originalEvent) => {
 
   return true
 }
-let onDropCallback = (evt, originalEvent) => {
-  console.log('onDropCallback')
-}
+
+// Draggable logic
+const drag = ref(false)
+const dragOptions = computed(() => {
+  return {
+    animation: 200,
+    group: 'description',
+    disabled: false,
+    ghostClass: 'hidden'
+  }
+})
 </script>
 
 <template>
@@ -183,11 +192,16 @@ let onDropCallback = (evt, originalEvent) => {
         <draggable
           :list="desserts"
           tag="tbody"
-          :disabled="!allowDrag"
-          :move="onMoveCallback"
-          :clone="onCloneCallback"
-          @end="onDropCallback"
+          :component-data="{
+            tag: 'tbody',
+            type: 'transition-group',
+            name: !drag ? 'flip-list' : null
+          }"
+          v-bind="dragOptions"
+          @start="drag = true"
+          @end="drag = false"
           item-key="name"
+          handle=".handle"
         >
           <template #item="{ element, idx }">
             <DataTableRowHandler
@@ -196,14 +210,15 @@ let onDropCallback = (evt, originalEvent) => {
               :headers="activeHeaders"
               :item-class="getClass(element)"
             >
-              <template #item.lock="{ item }">
-                <v-icon @click="item.locked = item.locked ? false : true">{{
-                  item.locked ? 'mdi-pin-outline' : 'mdi-pin-off-outline'
-                }}</v-icon>
+              <template #item.handle="{ item }">
+                <v-icon
+                  :icon="mdiDragHorizontalVariant"
+                  role="img"
+                  aria-hidden="false"
+                  :class="'handle'"
+                />
               </template>
-
               <template #item.carbs="{ item }">
-                {{ item.carbs }}
                 <v-icon>{{
                   item.carbs > 80
                     ? 'mdi-speedometer'
@@ -217,6 +232,7 @@ let onDropCallback = (evt, originalEvent) => {
         </draggable>
       </template>
     </v-data-table>
+    <p>{{ desserts }}</p>
   </div>
 </template>
 
@@ -229,5 +245,8 @@ let onDropCallback = (evt, originalEvent) => {
 }
 .cal-low {
   background-color: lightgoldenrodyellow;
+}
+
+.handle {
 }
 </style>

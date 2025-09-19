@@ -38,7 +38,7 @@ export const emptyRecipe: Recipe = {
   tags: [],
   yield: {},
   tools: [],
-  ingredients: [{ name: 'a', units: 0, measure: 'x' }],
+  ingredients: [{ name: '' }],
   directions: [],
   components: []
 }

@@ -1,31 +1,37 @@
-<script setup lang="ts">
+<script async setup lang="ts">
+import { dbLit } from '@/literals'
+import type { DBConnection } from '@/services/database/dbInterface'
 import draggable from 'vuedraggable'
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import type { Ref } from 'vue'
 import { mdiDragHorizontalVariant } from '@mdi/js'
 import { NewIngredient } from '../../types/Ingredient'
 import { number } from 'zod'
 import TestTable from './testTable.vue'
+import type { DataTableHeader } from 'vuetify'
 
-const list = defineModel<Array<NewIngredient>>('ingredient_list', { required: true })
+const ingredientList = defineModel<Array<NewIngredient>>('ingredient_list', { required: true })
 
 const props = defineProps({
   parent_id: String,
   n_id: Number
 })
 
-const selected = []
-
 const tableHeaders = [
-  { text: '', value: 'draggable', width: '50px', sortable: false },
-  { text: 'Ingredient', value: 'ingredient', sortable: false },
-  { text: 'Units', value: 'units', sortable: false },
-  { text: 'Measure', value: 'measure', sortable: false }
-]
+  { value: 'dragHandle', width: '50px', sortable: false },
+  { title: 'Ingredient', value: 'ingredient', sortable: false },
+  { title: 'Units', value: 'units', sortable: false },
+  { title: 'Measure', value: 'measure', sortable: false }
+] as DataTableHeader[]
 
 const id = props.parent_id + 'newIngredientList' + props.n_id
 
-let counter = list.value.length
+let counter = ingredientList.value.length
+
+const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
+await db.value.waitForConnection()
+//const allIngredients = await db.value.getAllIngredients()
+const allIngredients = ['tomatoe', 'potatoe', 'carrot', 'letuce', 'egg']
 
 // Drag logic
 const drag = ref(false)
@@ -39,90 +45,102 @@ const dragOptions = computed(() => {
 })
 
 function addIngredient() {
-  if (list.value.length === 0 || list.value[list.value.length - 1].name !== '') {
+  if (
+    ingredientList.value.length === 0 ||
+    ingredientList.value[ingredientList.value.length - 1].name !== ''
+  ) {
     // TODO: Update to no position can be ''
-    list.value.push(new NewIngredient({ name: '' }, counter++))
+    ingredientList.value.push(new NewIngredient({ name: '' }, counter++))
   }
 }
 
 function removeIngredient(dragId: number) {
-  list.value = list.value.filter((ingredient) => {
+  ingredientList.value = ingredientList.value.filter((ingredient) => {
     return ingredient.dragId !== dragId
   })
+}
+
+let getClass = (idx: number) => {
+  return idx % 2 ? 'cal-high' : 'cal-low'
 }
 </script>
 
 <template>
   <h1>Ingredients</h1>
-  <!--<draggable
-    class="list-group"
-    tag="ul"
-    :component-data="{
-      tag: 'ul',
-      type: 'transition-group',
-      name: !drag ? 'flip-list' : null
-    }"
-    v-model="list"
-    v-bind="dragOptions"
-    @start="drag = true"
-    @end="drag = false"
-    item-key="dragId"
-    :group="id"
-  >
-    <template #item="{ element }">
-      <li class="list-group-item">
-        <input type="text" placeholder="Ingredients" v-model="element.name" />
-        <span>: </span>
-        <input type="number" placeholder="unitats* (opcional)" v-model="element.units" />
-        <input type="text" placeholder="mesura** (opcional)" v-model="element.measure" />
-        <button @click="removeIngredient(element.dragId)">X</button>
-        {{ element }}
-      </li>
-    </template>
-  </draggable>-->
-  <button @click="addIngredient">Add ingredient</button>
-
   <v-data-table
-    ref="ingredientTable"
-    v-model="selected"
+    ref="myTable"
     :headers="tableHeaders"
-    :items="list"
-    item-key="dragId"
+    :items="ingredientList"
+    item-key="name"
     class="elevation-1"
+    items-per-page="-1"
+    hide-default-body
+    hide-default-footer
   >
-    <template #tbody="props">
+    <template #tbody="{ items }">
       <draggable
-        :list="list"
+        :list="ingredientList"
+        tag="tbody"
         :component-data="{
           tag: 'tbody',
           type: 'transition-group',
           name: !drag ? 'flip-list' : null
         }"
-        v-model="list"
         v-bind="dragOptions"
         @start="drag = true"
         @end="drag = false"
-        item-key="dragId"
-        :group="id"
+        item-key="name"
+        handle=".handle"
       >
-        <template #item="{ element }">
-          <tr class="list-group-item">
-            <td><v-input type="text" placeholder="Ingredients" v-model="element.name" /></td>
-            <td>
-              <input type="number" placeholder="unitats* (opcional)" v-model="element.units" />
+        <template #item="{ element, idx }">
+          <tr :class="getClass">
+            <td :key="0">
+              <v-icon
+                :icon="mdiDragHorizontalVariant"
+                role="img"
+                aria-hidden="false"
+                :class="'handle'"
+              />
             </td>
-            <td>
-              <input type="text" placeholder="mesura** (opcional)" v-model="element.measure" />
+
+            <td :key="1">
+              <v-combobox
+                type="text"
+                label="Ingredient"
+                placeholder="tomato"
+                hint="Input only the name of the ingredient"
+                :items="allIngredients"
+                v-model="element.name"
+              />
             </td>
-            <td><button @click="removeIngredient(element.dragId)">X</button></td>
+
+            <td :key="2">
+              <v-text-field
+                type="number"
+                label="Units"
+                placeholder="0"
+                v-model="element.units"
+                clearable
+              />
+            </td>
+
+            <td :key="3">
+              <v-text-field
+                type="text"
+                label="Measure"
+                placeholder="kg, g, l, ..."
+                hint="Try to keep it as standarized as possible"
+                v-model="element.measure"
+                clearable
+              />
+            </td>
           </tr>
         </template>
       </draggable>
     </template>
   </v-data-table>
-  <p>hello?</p>
 
-  <TestTable></TestTable>
+  <button @click="addIngredient">Add ingredient</button>
 </template>
 
 <style>
