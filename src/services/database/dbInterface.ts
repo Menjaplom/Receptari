@@ -14,10 +14,12 @@ export interface DBConnection {
   listAllRecipes(): Promise<Array<RecipeThumbnail>>
 
   getRecipe(recipeId: number): Promise<Recipe>
-  
+
   getAllCategories(): Promise<string[]>
 
   getAllTags(): Promise<Tag[]>
 
   getAllTools(): Promise<string[]>
+
+  getAllIngredients(): Promise<string[]>
 }

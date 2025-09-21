@@ -38,7 +38,7 @@ export const emptyRecipe: Recipe = {
   tags: [],
   yield: {},
   tools: [],
-  ingredients: [{ name: '' }],
+  ingredients: [],
   directions: [],
   components: []
 }
@@ -84,7 +84,7 @@ export class NewRecipe {
     this.cookTime = recipe.cookTime
     this.tools = recipe.tools.map((tool, idx) => new NewTool(tool, idx))
     this.difficulty = recipe.difficulty
-    this.ingredients = recipe.ingredients.map((ingr, idx) => new NewIngredient(ingr, idx))
+    this.ingredients = recipe.ingredients.map((ingr, idx) => new NewIngredient(idx, ingr))
     this.directions = recipe.directions.map((dir, idx) => new NewDirection(dir, idx))
     this.components = recipe.components.map((c) => new NewRecipe(c)) //TODO: CHECK REICPE ID DEFINES DRAGID FOR EACH CHILD
   }
@@ -101,7 +101,7 @@ export class NewRecipe {
       prepTime: this.prepTime,
       cookTime: this.cookTime,
       tools: this.tools.map((tool) => tool.exportTool()),
-      ingredients: this.ingredients.map((ingr) => ingr.exportIngredient()),
+      ingredients: this.ingredients.map((ingr) => ingr.exportIngredient()).filter((ingr) => !!ingr),
       directions: this.directions.map((d) => d.exportDirection()),
       components: this.components.map((c) => c.exportRecipe())
     }

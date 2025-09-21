@@ -4,11 +4,27 @@ import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
 import { emptyRecipe, type Recipe } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
-import { createTablesRecipes, insertRecipeBody, insertRecipeMedias, getAllRecipeThumbnails, getRecipeBody } from './tables/recipes'
-import { createTablesCategories, getCategories, getRecipeCategories, insertRecipeCategories } from './tables/categories'
+import {
+  createTablesRecipes,
+  insertRecipeBody,
+  insertRecipeMedias,
+  getAllRecipeThumbnails,
+  getRecipeBody
+} from './tables/recipes'
+import {
+  createTablesCategories,
+  getCategories,
+  getRecipeCategories,
+  insertRecipeCategories
+} from './tables/categories'
 import { createTablesTags, getRecipeTags, getTags, insertTags } from './tables/tags'
 import { createTablesTools, getRecipeTools, insertTools } from './tables/tools'
-import { createTablesIngredients, getRecipeIngredients, insertIngredients } from './tables/ingredients'
+import {
+  createTablesIngredients,
+  getIngredients,
+  getRecipeIngredients,
+  insertIngredients
+} from './tables/ingredients'
 import { createTablesDirections, getRecipeDirections, insertDirections } from './tables/directions'
 import { createTablesComponents, getRecipeComponents, insertComponents } from './tables/components'
 import type { Tag } from '@/types/Tag'
@@ -26,18 +42,20 @@ export class DBSqlite implements DBConnection {
     const sqlPromise = initSqlJs({ locateFile: (_) => '/node_modules/sql.js/dist/sql-wasm.wasm' })
     console.log('Wasm promised')
     let fetchGoing = true
-    
+
     let fetchPromise
     try {
-      fetchPromise = fetch(dbURLLit + dbNameLit).then(r => {
-        if(JSON.stringify(r) == '{}') {
+      fetchPromise = fetch(dbURLLit + dbNameLit)
+        .then((r) => {
+          if (JSON.stringify(r) == '{}') {
+            return { response: undefined, going: false }
+          }
+          return { response: r, going: true }
+        })
+        .catch((error) => {
+          console.log(error)
           return { response: undefined, going: false }
-        }
-        return { response: r, going: true }
-      }).catch((error) => {
-        console.log(error)
-        return { response: undefined, going: false }
-      })
+        })
     } catch {
       fetchPromise = { response: undefined, going: false }
     }
@@ -67,7 +85,7 @@ export class DBSqlite implements DBConnection {
   }
 
   async waitForConnection(): Promise<void> {
-    const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
+    const delay = (ms: number) => new Promise((res) => setTimeout(res, ms))
 
     while (!this.ready) {
       console.log('Waiting for db to be ready...')
@@ -90,22 +108,20 @@ export class DBSqlite implements DBConnection {
       insertComponents(this.db!, recipe, recipeId)
       this.db!.run(sharedLit.commitTransaction)
       console.log('Recipe ' + recipe.title + 'commited to db.')
-      return Promise.resolve({id: recipeId, title: recipe.title, media: thumbnailMedia})
-    }
-    catch (e) {
+      return Promise.resolve({ id: recipeId, title: recipe.title, media: thumbnailMedia })
+    } catch (e) {
       console.log('AddRecipe rolling back. Error:' + e)
       this.db!.run(sharedLit.rollbackTransaction)
       return Promise.reject('Transaction failed: ' + e)
     }
   }
- 
+
   async listAllRecipes(): Promise<Array<RecipeThumbnail>> {
     if (!this.ready) return Promise.reject('listAllRecipes: DB not ready')
     try {
       let recipes = getAllRecipeThumbnails(this.db!)
       return Promise.resolve(recipes)
-    }
-    catch (e) {
+    } catch (e) {
       return Promise.reject(e)
     }
   }
@@ -125,7 +141,7 @@ export class DBSqlite implements DBConnection {
     for (let compId of componentIds) {
       recipe.components.push(await this.getRecipe(compId))
     }
-    
+
     console.log(JSON.stringify(recipe))
     return Promise.resolve(recipe)
   }
@@ -134,7 +150,6 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve(getCategories(this.db!))
   }
 
-
   getAllTags(): Promise<Tag[]> {
     return Promise.resolve(getTags(this.db!))
   }
@@ -142,5 +157,9 @@ export class DBSqlite implements DBConnection {
   getAllTools(): Promise<string[]> {
     console.log('Method not implemented.')
     return Promise.resolve([] as string[])
+  }
+
+  getAllIngredients(): Promise<string[]> {
+    return Promise.resolve(getIngredients(this.db!))
   }
 }

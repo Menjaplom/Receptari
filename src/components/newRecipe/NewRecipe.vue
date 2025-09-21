@@ -23,7 +23,7 @@ const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
 const props = defineProps<{
   recipe: Recipe | null
 }>()
-let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe?? emptyRecipe))
+let newRecipe: Ref<NewRecipe> = ref(new NewRecipe(props.recipe ?? emptyRecipe))
 const db: Ref<DBConnection> = inject(dbLit) as Ref<DBConnection>
 await db.value.waitForConnection()
 
@@ -31,10 +31,6 @@ const allCategories = await db.value.getAllCategories()
 console.log('all categories')
 console.log(allCategories)
 const allTags = await db.value.getAllTags()
-
-let selectedCategories = ref(newRecipe.value.category
-  .map((cat) => allCategories.findIndex((c)=> c===cat))
-  .filter((c)=> c !== -1))
 
 let savePopped: Ref<boolean> = ref(false)
 
@@ -62,15 +58,13 @@ async function saveRecipe() {
   console.log('recipe to be saved' + JSON.stringify(recipeComputed))
   db.value.addRecipe(recipeComputed).then((thumbnail) => {
     console.log('Redirecting to Main page...')
-    setTimeout(() => router.replace({path: '/', }), 100);
+    setTimeout(() => router.replace({ path: '/' }), 100)
   })
-
 }
 
-function required (v: any) {
+function required(v: any) {
   return !!v || 'Field is required'
 }
-
 </script>
 
 <template>
@@ -78,22 +72,37 @@ function required (v: any) {
     <h2>New Recipe</h2>
     <div>
       <h3>Nom de la recepta</h3>
-      <v-text-field v-model="newRecipe.title" placeholder="Title" hint="Es mostrarà a la pàgina d'inici" :rules="[required]" clearable></v-text-field>
+      <v-text-field
+        v-model="newRecipe.title"
+        placeholder="Title"
+        hint="Es mostrarà a la pàgina d'inici"
+        :rules="[required]"
+        clearable
+      ></v-text-field>
     </div>
-    
+
     <div>
       <h3>Multimedia de la recepta</h3>
-      <AddMedia v-model:new_media_list="newRecipe.media" :parent_id="`${newRecipe.id}_`" :n_id="0"/>
+      <AddMedia
+        v-model:new_media_list="newRecipe.media"
+        :parent_id="`${newRecipe.id}_`"
+        :n_id="0"
+      />
     </div>
 
     <div>
       <h3>Description</h3>
-      <v-text-field v-model="newRecipe.description" placeholder="Description" hint="Informació sobre la recepta" clearable></v-text-field>
-    </div>  
+      <v-text-field
+        v-model="newRecipe.description"
+        placeholder="Description"
+        hint="Informació sobre la recepta"
+        clearable
+      ></v-text-field>
+    </div>
 
     <div>
       <h3>Categories</h3>
-      <CategorySelection v-model:categories="newRecipe.category"/>
+      <CategorySelection v-model:categories="newRecipe.category" />
     </div>
 
     <div>
@@ -101,42 +110,62 @@ function required (v: any) {
       <!--<NewTags v-model:new-tags="newRecipe.tags" />-->
       <Suspense>
         <!-- component with nested async dependencies -->
-        <NewTags v-model:new-tags="newRecipe.tags"/>
+        <NewTags v-model:new-tags="newRecipe.tags" />
 
         <!-- loading state via #fallback slot -->
-        <template #fallback>
-          Loading tags...
-        </template>
+        <template #fallback> Loading tags... </template>
       </Suspense>
     </div>
 
     <div>
       <h3>Recipe yield</h3>
-      
-      <v-text-field v-model="newRecipe.yield.units" placeholder="units" hint="number of portions" type="number" clearable></v-text-field>
-      <v-text-field v-model="newRecipe.yield.measure" placeholder="measure" hint="measure units describing the portions" type="text" clearable></v-text-field>
+
+      <v-text-field
+        v-model="newRecipe.yield.units"
+        placeholder="units"
+        hint="number of portions"
+        type="number"
+        clearable
+      ></v-text-field>
+      <v-text-field
+        v-model="newRecipe.yield.measure"
+        placeholder="measure"
+        hint="measure units describing the portions"
+        type="text"
+        clearable
+      ></v-text-field>
     </div>
 
     <div>
       <h3>Preparation time</h3>
-      <v-text-field v-model="newRecipe.prepTime" placeholder="1 hour..." hint="Total time needed to complete the recipe start to finish" type="text" clearable></v-text-field>
+      <v-text-field
+        v-model="newRecipe.prepTime"
+        placeholder="1 hour..."
+        hint="Total time needed to complete the recipe start to finish"
+        type="text"
+        clearable
+      ></v-text-field>
     </div>
 
     <div>
       <h3>Cook time</h3>
-      <v-text-field v-model="newRecipe.cookTime" placeholder="1 hour..." hint="Time spent actively cooking" type="text" clearable></v-text-field>
+      <v-text-field
+        v-model="newRecipe.cookTime"
+        placeholder="1 hour..."
+        hint="Time spent actively cooking"
+        type="text"
+        clearable
+      ></v-text-field>
     </div>
 
     <div>
       <h3>Difficulty</h3>
-      <DifficultySelector v-model:difficulty="newRecipe.difficulty"/>
+      <DifficultySelector v-model:difficulty="newRecipe.difficulty" />
     </div>
 
     <div>
       <h3>Tools</h3>
-      <NewTools :parent_id="parent_id"
-            :n_id="0"
-            :tool_list="newRecipe.tools" />
+      <NewTools :parent_id="parent_id" :n_id="0" :tool_list="newRecipe.tools" />
     </div>
 
     <div id="components_selector" style="display: none">
@@ -202,11 +231,15 @@ function required (v: any) {
 
       <div>
         <h3>Directions</h3>
-        <UpdateDirection :parent_id="parent_id" :n_id="2" v-model:direction_list="newRecipe.directions"/>
+        <UpdateDirection
+          :parent_id="parent_id"
+          :n_id="2"
+          v-model:direction_list="newRecipe.directions"
+        />
       </div>
     </div>
 
-    <button @click="(savePopped = true)">Save recipe</button>
+    <button @click="savePopped = true">Save recipe</button>
     <SavePopup v-model:visible="savePopped" @run-process="saveRecipe" />
 
     <p style="color: black">{{ JSON.stringify(newRecipe.ingredients) }}</p>

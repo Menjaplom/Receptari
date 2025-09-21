@@ -12,22 +12,24 @@ export type Ingredient = z.infer<typeof ingredientSchema>
 
 export class NewIngredient {
   dragId: number
-  name: string
+  name?: string
   units?: number
-  measure?:  string
+  measure?: string
 
-  constructor(ingredient: Ingredient, dragId: number) {
+  constructor(dragId: number, ingredient?: Ingredient) {
     this.dragId = dragId
-    this.name = ingredient.name
-    this.units = ingredient.units
-    this.measure = ingredient.measure
+    this.name = ingredient?.name
+    this.units = ingredient?.units
+    this.measure = ingredient?.measure
   }
 
-  exportIngredient(): Ingredient {
-    return {
-      'name': this.name,
-      'units': this.units,
-      'measure': this.measure
-    }
+  exportIngredient(): Ingredient | null {
+    return !this.name || this.name === ''
+      ? null
+      : {
+          name: this.name!,
+          units: this.units,
+          measure: this.measure
+        }
   }
 }
