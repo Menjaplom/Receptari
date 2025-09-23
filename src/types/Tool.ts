@@ -2,15 +2,15 @@ import { z } from 'zod'
 
 export const toolSchema = z.object({
   name: z.string(),
-  description:  z.string().optional()
+  description: z.string().optional()
 })
 
 export type Tool = z.infer<typeof toolSchema>
 
 export class NewTool {
   dragId: number
-  name: string
-  description?:  string
+  name?: string
+  description?: string
 
   constructor(tool: Tool, dragId: number) {
     this.dragId = dragId
@@ -18,10 +18,12 @@ export class NewTool {
     this.description = tool.description
   }
 
-  exportTool(): Tool {
-    return {
-      'name': this.name,
-      'description': this.description
-    }
+  exportTool(): Tool | null {
+    return !this.name || this.name === ''
+      ? null
+      : {
+          name: this.name,
+          description: this.description
+        }
   }
 }

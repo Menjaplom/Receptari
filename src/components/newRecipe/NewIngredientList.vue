@@ -95,7 +95,7 @@ let getClass = (idx: number) => {
         v-bind="dragOptions"
         @start="drag = true"
         @end="drag = false"
-        item-key="name"
+        item-key="dragId"
         handle=".handle"
       >
         <template #item="{ element }">

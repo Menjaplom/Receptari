@@ -1,7 +1,7 @@
-import type { Database } from "sql.js"
-import { tableRecipes } from "./recipes"
-import type { Recipe } from "@/types/Recipe"
-import type { Tool } from "@/types/Tool"
+import type { Database } from 'sql.js'
+import { tableRecipes } from './recipes'
+import type { Recipe } from '@/types/Recipe'
+import type { Tool } from '@/types/Tool'
 
 // Table names
 const tableTools = `Tools`
@@ -9,18 +9,26 @@ const tableRecipeTools = `RecipeTools`
 
 // Table creation literals
 const createTableTools =
-  `CREATE TABLE IF NOT EXISTS ` + tableTools + ` (
+  `CREATE TABLE IF NOT EXISTS ` +
+  tableTools +
+  ` (
     tool TEXT PRIMARY KEY
   ) STRICT`
 
 const createTableRecipeTools =
-  `CREATE TABLE IF NOT EXISTS ` + tableRecipeTools + ` (
+  `CREATE TABLE IF NOT EXISTS ` +
+  tableRecipeTools +
+  ` (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     recipeId INTEGER,
     tool TEXT NOT NULL,
     description TEXT,
-    FOREIGN KEY (recipeId) REFERENCES ` + tableRecipes + `(id),
-    FOREIGN KEY (tool) REFERENCES ` + tableTools + `(tool)
+    FOREIGN KEY (recipeId) REFERENCES ` +
+  tableRecipes +
+  `(id),
+    FOREIGN KEY (tool) REFERENCES ` +
+  tableTools +
+  `(tool)
   ) STRICT`
 
 export function createTablesTools(db: Database) {
@@ -30,12 +38,16 @@ export function createTablesTools(db: Database) {
 
 // Table insertion literals
 const insertTool =
-  `INSERT OR IGNORE INTO ` + tableTools + `(tool)  VALUES (
+  `INSERT OR IGNORE INTO ` +
+  tableTools +
+  `(tool)  VALUES (
     :tool
   )`
 
-const insertRecipeTool = 
-  `INSERT INTO ` + tableRecipeTools + `(recipeId, tool, description) VALUES (
+const insertRecipeTool =
+  `INSERT INTO ` +
+  tableRecipeTools +
+  `(recipeId, tool, description) VALUES (
     :recipeId,
     :tool,
     :description
@@ -43,44 +55,54 @@ const insertRecipeTool =
 
 // Insertions
 export function insertTools(db: Database, recipe: Recipe, recipeId: number): void {
-  const stmtTool = db.prepare(insertTool);
-  const stmtRecipeTool = db.prepare(insertRecipeTool);
+  const stmtTool = db.prepare(insertTool)
+  const stmtRecipeTool = db.prepare(insertRecipeTool)
   try {
     recipe.tools.forEach((tool) => {
       stmtTool.run({
-        ":tool": tool.name
-      });
-      stmtRecipeTool.run({
-        ":recipeId": recipeId,
-        ":tool": tool.name,
-        ":description": tool.description ?? null
+        ':tool': tool.name
       })
-    });
-  }
-  catch (e) {
-    throw new Error('Recipe tool insertion failed. Cause: ' + e);
-  }
-  finally {
-    stmtTool.free();
-    stmtRecipeTool.free();
+      stmtRecipeTool.run({
+        ':recipeId': recipeId,
+        ':tool': tool.name,
+        ':description': tool.description ?? null
+      })
+    })
+  } catch (e) {
+    throw new Error('Recipe tool insertion failed. Cause: ' + e)
+  } finally {
+    stmtTool.free()
+    stmtRecipeTool.free()
   }
 }
 
 // Queries
-const selectRecipeTools = 
-  `SELECT tool, description FROM ${tableRecipeTools}
+const selectRecipeTools = `SELECT tool, description FROM ${tableRecipeTools}
    WHERE recipeId = :id`
 
+const selectTools = `SELECT tool FROM ${tableTools}
+   ORDER BY name ASC`
+
 export function getRecipeTools(db: Database, recipeId: number, recipe: Recipe) {
-  const stmtRecTag = db.prepare(selectRecipeTools)
+  const stmtRecTools = db.prepare(selectRecipeTools)
   try {
-    const result = stmtRecTag.getAsObject({':id': `${recipeId}`}) as unknown as Tool[]
+    const result = stmtRecTools.getAsObject({ ':id': `${recipeId}` }) as unknown as Tool[]
     recipe.tools = result
 
     //recipe.title = result[0].values
     console.log('retrieved tools ' + JSON.stringify(result))
-  }
-  catch (e) {
+  } catch (e) {
     throw new Error('Get recipe tools failed. Cause: ' + e)
+  }
+}
+
+export function getTools(db: Database): string[] {
+  const stmtTools = db.prepare(selectTools)
+  try {
+    const result = stmtTools.getAsObject()
+    console.log('retrieved all tools ' + JSON.stringify(result.values))
+    return (result.values as unknown as string[]) ?? ([] as string[])
+  } catch (e) {
+    throw new Error('Get all tools failed. Cause: ' + e)
   }
 }

@@ -18,7 +18,7 @@ import {
   insertRecipeCategories
 } from './tables/categories'
 import { createTablesTags, getRecipeTags, getTags, insertTags } from './tables/tags'
-import { createTablesTools, getRecipeTools, insertTools } from './tables/tools'
+import { createTablesTools, getRecipeTools, getTools, insertTools } from './tables/tools'
 import {
   createTablesIngredients,
   getIngredients,
@@ -155,8 +155,7 @@ export class DBSqlite implements DBConnection {
   }
 
   getAllTools(): Promise<string[]> {
-    console.log('Method not implemented.')
-    return Promise.resolve([] as string[])
+    return Promise.resolve(getTools(this.db!))
   }
 
   getAllIngredients(): Promise<string[]> {

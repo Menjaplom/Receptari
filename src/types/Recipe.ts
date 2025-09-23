@@ -100,7 +100,7 @@ export class NewRecipe {
       yield: this.yield,
       prepTime: this.prepTime,
       cookTime: this.cookTime,
-      tools: this.tools.map((tool) => tool.exportTool()),
+      tools: this.tools.map((tool) => tool.exportTool()).filter((tool) => !!tool),
       ingredients: this.ingredients.map((ingr) => ingr.exportIngredient()).filter((ingr) => !!ingr),
       directions: this.directions.map((d) => d.exportDirection()),
       components: this.components.map((c) => c.exportRecipe())
