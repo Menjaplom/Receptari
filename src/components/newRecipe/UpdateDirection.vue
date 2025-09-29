@@ -3,6 +3,7 @@ import draggable from 'vuedraggable'
 import { ref, computed } from 'vue'
 import { emptyDirection, NewDirection, type Direction } from '../../types/Direction'
 import AddMedia from '../media/AddMedia.vue'
+import { mdiDragHorizontalVariant, mdiClose } from '@mdi/js'
 
 const props = defineProps({
   parent_id: String,
@@ -39,7 +40,6 @@ function removeDirection(dragId: number) {
     }
   }
 }
-
 </script>
 
 <template>
@@ -60,22 +60,48 @@ function removeDirection(dragId: number) {
     :group="id"
   >
     <template #item="{ element }">
-      <li class="list-group-item">
-        <span class="handle"></span>
-        <input type="text" v-model="element.description" />
-        
-        <button @click="removeDirection(element.dragId)">X</button>
-        <AddMedia v-model:new_media_list="element.media" :parent_id="id" :n_id="element.dragId" :add_but_msg="'Add image'"/>
-        {{ element }}
+      <li class="list-group-item" :style="{ display: 'inline-flex', width: '100%' }">
+        <v-icon :icon="mdiDragHorizontalVariant" role="img" aria-hidden="false" :class="'handle'" />
+        <div :style="{ width: '100%' }">
+          <div :style="{ display: 'inline-flex', width: '100%' }">
+            <v-textarea
+              label="Direction"
+              variant="solo-filled"
+              v-model="element.description"
+              rows="2"
+              clearable
+              style="width: 100%"
+            />
+          </div>
+          <div>
+            <v-expansion-panels>
+              <v-expansion-panel title="Add media">
+                <v-expansion-panel-text>
+                  <AddMedia
+                    v-model:new_media_list="element.media"
+                    :parent_id="id"
+                    :n_id="element.dragId"
+                    :add_but_msg="'Add image'"
+                  />
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </div>
+        </div>
+        <v-icon
+          :icon="mdiClose"
+          role="img"
+          aria-hidden="false"
+          @click="removeDirection(element.dragId)"
+        />
       </li>
     </template>
   </draggable>
+
   <button @click="addDirection">Add direction</button>
 </template>
 
 <style>
-
-
 .addImage {
   padding: 8px;
   background-image: url(../icons/image-plus.svg);

@@ -4,8 +4,7 @@ import { ref, computed, type Ref } from 'vue'
 import MediaCarrousel from './MediaCarrousel.vue'
 import { NewMedia, type Media } from '../../types/Media'
 import { repoUrlLit } from '@/literals'
-import { mdiDragHorizontalVariant } from '@mdi/js';
-
+import { mdiDragHorizontalVariant } from '@mdi/js'
 
 const props = defineProps({
   parent_id: String,
@@ -13,10 +12,10 @@ const props = defineProps({
   add_but_msg: String
 })
 
-const newMediaList = defineModel<Array<NewMedia>>('new_media_list', { required: true  })
+const newMediaList = defineModel<Array<NewMedia>>('new_media_list', { required: true })
 
 const newMediaFiles: Ref<File[]> = ref([]) // todo: shallowRef
-const counter: Ref<number> = ref(0) 
+const counter: Ref<number> = ref(0)
 
 let nextDragId = newMediaList.value.length
 const id = props.parent_id + 'addMedia' + props.n_id
@@ -35,12 +34,14 @@ const dragOptions = computed(() => {
 // Carrousel input logic
 let selected = ref(0)
 const mediaList = computed(() => {
-  return newMediaList.value?.map((m) => {
-        return {
-        'url': m.urlAux,
-        'footer': m.footer
+  return (
+    newMediaList.value?.map((m) => {
+      return {
+        url: m.urlAux,
+        footer: m.footer
       }
     }) || []
+  )
 })
 
 // Add URL to carrousel
@@ -51,14 +52,14 @@ function onFileChange(e: Event) {
   }
 
   for (const file of input.files) {
-    console.log("file name " + file.name)
+    console.log('file name ' + file.name)
     const newUrl = repoUrlLit + '/' //TODO: PROGRAM VALID URL
     const auxUrl = URL.createObjectURL(file)
-    
-    console.log("medialist is result: " + newMediaList.value.find((v) => v.url == newUrl) )
+
+    console.log('medialist is result: ' + newMediaList.value.find((v) => v.url == newUrl))
     if (newMediaList.value.find((v) => v.urlAux == auxUrl) === undefined) {
-      console.log("still going " + file.name)
-      let auxMed = new NewMedia({'url': newUrl}, counter.value++)
+      console.log('still going ' + file.name)
+      let auxMed = new NewMedia({ url: newUrl }, counter.value++)
       auxMed.urlAux = auxUrl
       auxMed.file = file
       newMediaList.value.push(auxMed)
@@ -80,18 +81,18 @@ function removeFile(id: number) {
 }
 
 function appendNewMediaFile(file: File) {
-    console.log("file name " + file.name)
-    const newUrl = repoUrlLit + '/' + file.name //TODO: PROGRAM VALID URL
-    const auxUrl = URL.createObjectURL(file)
-    
-    console.log("medialist is result: " + newMediaList.value.find((v) => v.url == newUrl) )
-    if (!newMediaList.value.find((v) => v.urlAux == auxUrl)) {
-      console.log("still going " + file.name)
-      let auxMed = new NewMedia({'url': newUrl}, nextDragId++)
-      auxMed.urlAux = auxUrl
-      auxMed.file = file
-      newMediaList.value.push(auxMed)
-    }
+  console.log('file name ' + file.name)
+  const newUrl = repoUrlLit + '/' + file.name //TODO: PROGRAM VALID URL
+  const auxUrl = URL.createObjectURL(file)
+
+  console.log('medialist is result: ' + newMediaList.value.find((v) => v.url == newUrl))
+  if (!newMediaList.value.find((v) => v.urlAux == auxUrl)) {
+    console.log('still going ' + file.name)
+    let auxMed = new NewMedia({ url: newUrl }, nextDragId++)
+    auxMed.urlAux = auxUrl
+    auxMed.file = file
+    newMediaList.value.push(auxMed)
+  }
 }
 
 function appendNewMediaFiles(mediaFiles: File | File[]) {
@@ -106,11 +107,9 @@ function appendNewMediaFiles(mediaFiles: File | File[]) {
 }
 
 const video_supp = ['mp4', 'ogg', 'webm']
-
 </script>
 
 <template>
-  
   <v-file-input
     v-model="newMediaFiles"
     label="File input"
@@ -138,39 +137,31 @@ const video_supp = ['mp4', 'ogg', 'webm']
     handle=".handle"
   >
     <template #item="{ element, index }">
-      <li class="list-group-item">
-        <v-icon :icon="mdiDragHorizontalVariant" role="img" aria-hidden="false" :class="'handle'"/>
+      <li class="list-group-item" :style="{ display: 'inline-flex', width: '100%' }">
+        <v-icon :icon="mdiDragHorizontalVariant" role="img" aria-hidden="false" :class="'handle'" />
 
         <span :class="{ bold: element.dragId === newMediaList[selected].dragId }">{{
           newMediaList[index].file?.name || "i'll figure it out later"
         }}</span>
 
-        <v-text-field label="Footer" v-model="newMediaList[index].footer" clearable/>
+        <v-text-field label="Footer" v-model="newMediaList[index].footer" clearable />
 
         <button @click="removeFile(element.dragId)">X</button>
       </li>
     </template>
   </draggable>
 
-  <v-carousel
-    v-if="!!newMediaList.length"
-    v-model="selected"
-    height="400"
-  >
-    <v-carousel-item
-      v-for="(item, i) in newMediaList"
-      :key="i"
-      cover
-    >
-    <div
-      v-if="!video_supp.includes(item.url?.split('.').pop() ?? '')"
-      class="slide"
-      :style="`background-image: url(${item.urlAux});`"
-    ></div>
-    <div v-else class="slide">
-      <video :src="item.urlAux" controls></video>
-    </div>
-  </v-carousel-item>
+  <v-carousel v-if="!!newMediaList.length" v-model="selected" height="400">
+    <v-carousel-item v-for="(item, i) in newMediaList" :key="i" cover>
+      <div
+        v-if="!video_supp.includes(item.url?.split('.').pop() ?? '')"
+        class="slide"
+        :style="`background-image: url(${item.urlAux});`"
+      ></div>
+      <div v-else class="slide">
+        <video :src="item.urlAux" controls></video>
+      </div>
+    </v-carousel-item>
 
     <v-overlay
       :scrim="false"
@@ -181,16 +172,12 @@ const video_supp = ['mp4', 'ogg', 'webm']
       persistent
     >
       <v-scroll-x-transition mode="out-in" appear>
-        <v-sheet
-          :key="selected"
-          rounded="xl"
-        >
+        <v-sheet :key="selected" rounded="xl">
           <v-list-item
             v-if="newMediaList.length > 0 && newMediaList[selected].footer"
             :title="newMediaList[selected].footer"
             class="pa-1 pr-6"
           >
-          
           </v-list-item>
         </v-sheet>
       </v-scroll-x-transition>
@@ -234,9 +221,7 @@ const video_supp = ['mp4', 'ogg', 'webm']
 }
 
 .handle {
-
 }
-
 
 .slide {
   scroll-snap-align: start;
@@ -247,5 +232,4 @@ const video_supp = ['mp4', 'ogg', 'webm']
   background-repeat: no-repeat;
   background-color: #999;
 }
-
 </style>
