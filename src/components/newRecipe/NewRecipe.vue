@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import NewIngredientList from './NewIngredientList.vue'
-import UpdateDirection from './UpdateDirection.vue'
 import SavePopup from './SavePopup.vue'
 import type { Ref } from 'vue'
 import { ref, computed, inject } from 'vue'
@@ -11,11 +9,12 @@ import router from '@/router'
 import { HSLToHexStr, newHSLPastel } from '@/utils/colors'
 import TagComp from '../tag/TagComp.vue'
 import NewTags from './NewTags.vue'
-import NewTools from './NewTools.vue'
 import RecipeWrapper from '../misc/RecipeWrapper.vue'
 import AddMedia from '../media/AddMedia.vue'
 import CategorySelection from './CategorySelection.vue'
 import DifficultySelector from './DifficultySelector.vue'
+import NewSimpleRecipe from './NewSimpleRecipe.vue'
+import NewComposedRecipe from './NewComposedRecipe.vue'
 //import { Octokit } from 'https://esm.sh/@octokit/core@4.2.2'
 
 const parent_id = 'newRecipe' // FIXME: HARDCODED VALUE!!
@@ -30,16 +29,19 @@ await db.value.waitForConnection()
 const allCategories = await db.value.getAllCategories()
 console.log('all categories')
 console.log(allCategories)
-const allTags = await db.value.getAllTags()
+
+// Component selection
+const isComposedRecipe = ref(false)
+
+let isOnlyComponentComposed: Ref<boolean> = ref(false)
+const allComponentsNamesIds = await db.value.getCategoryComponentsNames()
+const allRecipeNamesIds = await db.value.getCategoryComponentsNames()
+const allComponentsNames = computed(() => {
+  if (isOnlyComponentComposed) return allComponentsNamesIds
+  return allRecipeNamesIds
+})
 
 let savePopped: Ref<boolean> = ref(false)
-
-const composedRecipe = computed(() => {
-  if (newRecipe.value.components.length > 0) {
-    return true
-  }
-  return false
-})
 
 const debugDirections = computed(() => {
   alert('hello?')
@@ -164,6 +166,29 @@ function required(v: any) {
     </div>
 
     <div>
+      <h3>Recipe type</h3>
+      <v-radio-group v-model="isComposedRecipe" inline>
+        <v-radio label="Simple" :value="false"></v-radio>
+        <v-radio label="Compound" :value="true"></v-radio>
+      </v-radio-group>
+      <v-combobox
+        v-if="isComposedRecipe"
+        clearable
+        multiple
+        label="Combobox"
+        :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+      />
+    </div>
+    <p>{{ isComposedRecipe }}</p>
+
+    <NewSimpleRecipe
+      v-if="!isComposedRecipe"
+      v-model:new-recipe="newRecipe"
+      :id="parent_id"
+    ></NewSimpleRecipe>
+
+    <NewComposedRecipe v-else :id="parent_id"></NewComposedRecipe>
+    <!--<div>
       <h3>Tools</h3>
       <NewTools :parent_id="parent_id" :n_id="0" :tool_list="newRecipe.tools" />
     </div>
@@ -196,7 +221,6 @@ function required(v: any) {
     </div>
 
     <div id="components" style="display: none">
-      <!-- Reused components -->
       <div>
         <h2>Component 1</h2>
         <div>
@@ -216,7 +240,6 @@ function required(v: any) {
     </div>
 
     <div>
-      <!-- Main component -->
       <h2 id="componentTitle" style="display: none">New Recipe</h2>
       <div>
         <div>
@@ -237,7 +260,7 @@ function required(v: any) {
           v-model:direction_list="newRecipe.directions"
         />
       </div>
-    </div>
+    </div>-->
 
     <button @click="savePopped = true">Save recipe</button>
     <SavePopup v-model:visible="savePopped" @run-process="saveRecipe" />

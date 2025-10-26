@@ -1,4 +1,4 @@
-import { type Recipe } from '@/types/Recipe'
+import type { Recipe, RecipeAutocomplete } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import type { Tag } from '@/types/Tag'
 
@@ -15,7 +15,11 @@ export interface DBConnection {
 
   getRecipe(recipeId: number): Promise<Recipe>
 
+  getAllRecipeNames(): Promise<RecipeAutocomplete[]>
+
   getAllCategories(): Promise<string[]>
+
+  getCategoryComponentsNames(): Promise<RecipeAutocomplete[]>
 
   getAllTags(): Promise<Tag[]>
 

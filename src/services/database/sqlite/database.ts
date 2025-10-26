@@ -2,18 +2,20 @@ import { dbNameLit, dbURLLit, defaultRecipeImg } from '@/literals'
 import { type DBConnection } from '../dbInterface'
 import initSqlJs, { type Database } from 'sql.js'
 import * as sharedLit from './sharedLiterals'
-import { emptyRecipe, type Recipe } from '@/types/Recipe'
+import { emptyRecipe, type Recipe, type RecipeAutocomplete } from '@/types/Recipe'
 import type { RecipeThumbnail } from '@/types/RecipeThumbnail'
 import {
   createTablesRecipes,
   insertRecipeBody,
   insertRecipeMedias,
   getAllRecipeThumbnails,
-  getRecipeBody
+  getRecipeBody,
+  getAllRecipeNames
 } from './tables/recipes'
 import {
   createTablesCategories,
   getCategories,
+  getCategoryComponentsNames,
   getRecipeCategories,
   insertRecipeCategories
 } from './tables/categories'
@@ -146,8 +148,16 @@ export class DBSqlite implements DBConnection {
     return Promise.resolve(recipe)
   }
 
+  getAllRecipeNames(): Promise<RecipeAutocomplete[]> {
+    return Promise.resolve(getAllRecipeNames(this.db!))
+  }
+
   getAllCategories(): Promise<string[]> {
     return Promise.resolve(getCategories(this.db!))
+  }
+
+  getCategoryComponentsNames(): Promise<RecipeAutocomplete[]> {
+    return Promise.resolve(getCategoryComponentsNames(this.db!))
   }
 
   getAllTags(): Promise<Tag[]> {

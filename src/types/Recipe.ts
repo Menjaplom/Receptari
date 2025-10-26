@@ -43,19 +43,6 @@ export const emptyRecipe: Recipe = {
   components: []
 }
 
-/*export type RecipeRawMedia = {
-  base: RawMedia[],
-  directions: Array<RawMedia[]>,
-  components: RecipeRawMedia | null
-}
-
-export const emptyRecRawMed: RecipeRawMedia = {
-  base: [],
-  directions: [[]],
-  components: null
-}*/
-
-// TODO: Add recursive component/newrecipe
 export class NewRecipe {
   id: number
   title: string
