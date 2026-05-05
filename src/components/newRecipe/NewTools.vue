@@ -107,6 +107,16 @@ let getClass = (idx: number) => {
 
             <td :key="2">
               <v-text-field
+                type="number"
+                label="Units"
+                placeholder="1"
+                v-model="element.units"
+                clearable
+              />
+            </td>
+
+            <td :key="3">
+              <v-text-field
                 type="text"
                 label="Description"
                 placeholder="20 cm"
@@ -116,7 +126,7 @@ let getClass = (idx: number) => {
               />
             </td>
 
-            <td :key="3">
+            <td :key="4">
               <v-icon
                 :icon="mdiClose"
                 role="img"

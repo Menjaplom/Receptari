@@ -22,6 +22,7 @@ const createTableRecipeTools =
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     recipeId INTEGER,
     tool TEXT NOT NULL,
+    units INTEGER,
     description TEXT,
     FOREIGN KEY (recipeId) REFERENCES ` +
   tableRecipes +
@@ -47,9 +48,10 @@ const insertTool =
 const insertRecipeTool =
   `INSERT INTO ` +
   tableRecipeTools +
-  `(recipeId, tool, description) VALUES (
+  `(recipeId, tool, units, description) VALUES (
     :recipeId,
     :tool,
+    :units,
     :description
   )`
 
@@ -65,6 +67,7 @@ export function insertTools(db: Database, recipe: Recipe, recipeId: number): voi
       stmtRecipeTool.run({
         ':recipeId': recipeId,
         ':tool': tool.name,
+        ':units': tool.units ?? null,
         ':description': tool.description ?? null
       })
     })
@@ -77,8 +80,9 @@ export function insertTools(db: Database, recipe: Recipe, recipeId: number): voi
 }
 
 // Queries
-const selectRecipeTools = `SELECT tool, description FROM ${tableRecipeTools}
-   WHERE recipeId = :id`
+const selectRecipeTools = `SELECT tool, units, description FROM ${tableRecipeTools}
+   WHERE recipeId = :id
+   ORDER BY id ASC`
 
 const selectTools = `SELECT tool FROM ${tableTools}
    ORDER BY name ASC`
@@ -106,3 +110,4 @@ export function getTools(db: Database): string[] {
     throw new Error('Get all tools failed. Cause: ' + e)
   }
 }
+
